@@ -22,9 +22,7 @@ kreplicas() {
 }
 
 kscalecpu() {
-  kubectl patch deployment springboot --type='json' -p='[{"op": "replace", "path": "/spec/template/spec/containers/0/resources/limits/cpu", "value":"'${1}'"}]'
-  kwait
-  kubectl patch deployment springboot --type='json' -p='[{"op": "replace", "path": "/spec/template/spec/containers/0/resources/requests/cpu", "value":"'${1}'"}]'
+  kubectl patch deployment springboot --type='json' -p='[{"op": "replace", "path": "/spec/template/spec/containers/0/resources/limits/cpu", "value":"'${1}'"}, {"op": "replace", "path": "/spec/template/spec/containers/0/resources/requests/cpu", "value":"'${1}'"}]'
   kwait
 }
 
