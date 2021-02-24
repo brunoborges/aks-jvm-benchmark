@@ -21,7 +21,7 @@ spec:
         image: teacr.azurecr.io/springboot:latest
         env:
         - name: JAVA_OPTS
-          value: ""
+          value: "-XX:+UseG1GC -XX:MaxRAMPercentage=70"
         ports:
         - containerPort: 8080
           name: http
@@ -38,3 +38,13 @@ spec:
             path: /
             port: 8080
           timeoutSeconds: 1
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: "app"
+                operator: In
+                values:
+                - springboot
+            topologyKey: "kubernetes.io/hostname"
