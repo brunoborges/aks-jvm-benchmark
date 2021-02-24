@@ -3,14 +3,12 @@ package examples.azure.aks.springboot;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
+
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import jdk.internal.platform.Metrics;
-
 import static java.lang.Runtime.getRuntime;
-
 import java.lang.management.ManagementFactory;
 
 @RestController
@@ -37,10 +35,24 @@ public class Controller {
             map.put(gcBean.getName(), gcBean.getObjectName().toString());
         }
 
-        // Metrics
-        // var metrics = Metrics.systemMetrics();
+        // OperatingSystem MX Bean
+        var osBean = (com.sun.management.OperatingSystemMXBean) ManagementFactory.getOperatingSystemMXBean();
+        map.put("osMXBean.getCommittedVirtualMemorySize", bytesToMBString(osBean.getCommittedVirtualMemorySize()));
+        map.put("osMXBean.getTotalPhysicalMemorySize", bytesToMBString(osBean.getTotalPhysicalMemorySize()));
+        map.put("osMXBean.getFreePhysicalMemorySize", bytesToMBString(osBean.getFreePhysicalMemorySize()));
+        map.put("osMXBean.getTotalSwapSpaceSize", bytesToMBString(osBean.getTotalSwapSpaceSize()));
+        map.put("osMXBean.getFreeSwapSpaceSize", bytesToMBString(osBean.getFreeSwapSpaceSize()));
+        map.put("osMXBean.getSystemCpuLoad", Double.toString(osBean.getSystemCpuLoad() * 100) + " %");
+        map.put("osMXBean.getProcessCpuLoad", Double.toString(osBean.getProcessCpuLoad() * 100) + " %");
+        map.put("osMXBean.getSystemLoadAverage", Double.toString(osBean.getSystemLoadAverage() * 100) + " %");
+        map.put("osMXBean.getProcessCpuTime", Double.toString(osBean.getProcessCpuTime() * 100) + " %");
+        map.put("osMXBean.getAvailableProcessors", Integer.toString(osBean.getAvailableProcessors()));
 
         return map;
+    }
+
+    private String bytesToMBString(long bytes) {
+        return Long.toString(bytes / 1024 / 1024) + " MB";
     }
 
     @RequestMapping("/json")
