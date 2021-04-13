@@ -42,11 +42,13 @@ public class Controller {
         map.put("osMXBean.getFreePhysicalMemorySize", bytesToMBString(osBean.getFreePhysicalMemorySize()));
         map.put("osMXBean.getTotalSwapSpaceSize", bytesToMBString(osBean.getTotalSwapSpaceSize()));
         map.put("osMXBean.getFreeSwapSpaceSize", bytesToMBString(osBean.getFreeSwapSpaceSize()));
-        map.put("osMXBean.getSystemCpuLoad", Double.toString(osBean.getSystemCpuLoad() * 100) + " %");
-        map.put("osMXBean.getProcessCpuLoad", Double.toString(osBean.getProcessCpuLoad() * 100) + " %");
-        map.put("osMXBean.getSystemLoadAverage", Double.toString(osBean.getSystemLoadAverage() * 100) + " %");
-        map.put("osMXBean.getProcessCpuTime", Double.toString(osBean.getProcessCpuTime() * 100) + " %");
+        map.put("osMXBean.getSystemCpuLoad", Double.toString(osBean.getSystemCpuLoad()));
+        map.put("osMXBean.getProcessCpuLoad", Double.toString(osBean.getProcessCpuLoad()));
+        map.put("osMXBean.getSystemLoadAverage", Double.toString(osBean.getSystemLoadAverage()));
+        map.put("osMXBean.getProcessCpuTime", Double.toString(osBean.getProcessCpuTime()));
         map.put("osMXBean.getAvailableProcessors", Integer.toString(osBean.getAvailableProcessors()));
+
+        map.put("cpu_shares", System.getProperty("cpushares"));
 
         return map;
     }
