@@ -7,24 +7,7 @@ durw="10s"
 dur="60s"
 timeout="2s"
 
-kwait() {
-  kubectl rollout status deployment/springboot
-}
-
-ksetenv() {
-  kubectl set env deployment/springboot JAVA_OPTS=${1}
-  kwait
-}
-
-kreplicas() {
-  kubectl scale --replicas=${1} -f deployment.yml
-  kwait
-}
-
-kscalecpu() {
-  kubectl patch deployment springboot --type='json' -p='[{"op": "replace", "path": "/spec/template/spec/containers/0/resources/limits/cpu", "value":"'${1}'"}, {"op": "replace", "path": "/spec/template/spec/containers/0/resources/requests/cpu", "value":"'${1}'"}]'
-  kwait
-}
+. kcmds.sh
 
 warmup() {
   echo "WARMUP-BEGIN Warming up for $durw..."
