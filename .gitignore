@@ -1,0 +1,12 @@
+target/classes/application.properties
+target/classes/examples/azure/aks/springboot/Application.class
+target/classes/examples/azure/aks/springboot/Controller.class
+target/classes/examples/azure/aks/springboot/Factorization.class
+target/classes/examples/azure/aks/springboot/PrimeFactor.class
+target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst
+target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst
+target/maven-status/maven-compiler-plugin/testCompile/default-testCompile/createdFiles.lst
+target/maven-status/maven-compiler-plugin/testCompile/default-testCompile/inputFiles.lst
+target/surefire-reports/examples.azure.aks.springboot.TestFactorization.txt
+target/surefire-reports/TEST-examples.azure.aks.springboot.TestFactorization.xml
+target/test-classes/examples/azure/aks/springboot/TestFactorization.class
