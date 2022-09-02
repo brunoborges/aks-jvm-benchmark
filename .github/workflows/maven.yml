@@ -23,7 +23,7 @@ jobs:
     - name: Set up JDK
       uses: actions/setup-java@v2
       with:
-        java-version: ${{ env.action_state }}
+        java-version: ${{ env.JDK_VERSION }}
         distribution: microsoft
     - name: Maven build
       run: mvn -B package --file pom.xml
