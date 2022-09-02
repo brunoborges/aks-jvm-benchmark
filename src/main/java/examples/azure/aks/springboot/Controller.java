@@ -19,6 +19,15 @@ public class Controller {
         return "Hello World";
     }
 
+    @RequestMapping("/primeFactor")
+    public Map<Long, String> findFactor(Long number, Boolean logging) {
+        var factorization = new Factorization(Boolean.TRUE.equals(logging));
+        var factors = factorization.factors(number).stream().map(n -> n.toString()).toList();
+        var map = new HashMap<Long, String>();
+        map.put(number, String.join(" ", factors));
+        return map;
+    }
+
     @RequestMapping("/inspect")
     public Map<String, String> inspect() {
         var runtime = getRuntime();
