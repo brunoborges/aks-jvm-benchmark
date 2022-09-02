@@ -16,7 +16,7 @@ public class TestFactorization {
         var expectedFactorization = "2 * 2 * 5 * 5";
 
         var controller = new Controller();
-        var map = controller.findFactor(input, false);
+        var map = controller.findFactor(input, true);
 
         assertFalse(map == null);
         assertEquals(input, map.number());
@@ -36,7 +36,7 @@ public class TestFactorization {
     private void testEvaluationOfFactorial(Long number) {
         try {
             var controller = new Controller();
-            var map = controller.findFactor(number, false);
+            var map = controller.findFactor(number, true);
 
             var mgr = new ScriptEngineManager();
             var engine = mgr.getEngineByName("JavaScript");
