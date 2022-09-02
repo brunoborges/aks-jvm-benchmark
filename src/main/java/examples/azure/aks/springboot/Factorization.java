@@ -1,7 +1,6 @@
 package examples.azure.aks.springboot;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.logging.Logger;
@@ -39,18 +38,6 @@ public class Factorization {
         }
 
         return Collections.unmodifiableCollection(results);
-    }
-
-    public static void main(String[] args) {
-        Factorization f = new Factorization();
-        long start = System.nanoTime();
-        long startMS = System.currentTimeMillis();
-        // 2 5 103 3030214670981671
-        long n = 3121121111111121130L;
-        f.factors(n).forEach(System.out::println);
-        System.out.println("");
-        System.out.println(System.nanoTime() - start);
-        System.out.println(System.currentTimeMillis() - startMS);
     }
 
 }

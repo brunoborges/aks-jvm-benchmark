@@ -3,6 +3,7 @@ package examples.azure.aks.springboot;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.stream.Collectors;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -20,12 +21,10 @@ public class Controller {
     }
 
     @RequestMapping("/primeFactor")
-    public Map<Long, String> findFactor(Long number, Boolean logging) {
+    public PrimeFactor findFactor(Long number, Boolean logging) {
         var factorization = new Factorization(Boolean.TRUE.equals(logging));
-        var factors = factorization.factors(number).stream().map(n -> n.toString()).toList();
-        var map = new HashMap<Long, String>();
-        map.put(number, String.join(" ", factors));
-        return map;
+        var factors = factorization.factors(number).stream().map(n -> n.toString()).collect(Collectors.joining(" * "));
+        return new PrimeFactor(number, factors);
     }
 
     @RequestMapping("/inspect")
@@ -47,11 +46,11 @@ public class Controller {
         // OperatingSystem MX Bean
         var osBean = (com.sun.management.OperatingSystemMXBean) ManagementFactory.getOperatingSystemMXBean();
         map.put("osMXBean.getCommittedVirtualMemorySize", bytesToMBString(osBean.getCommittedVirtualMemorySize()));
-        map.put("osMXBean.getTotalPhysicalMemorySize", bytesToMBString(osBean.getTotalPhysicalMemorySize()));
-        map.put("osMXBean.getFreePhysicalMemorySize", bytesToMBString(osBean.getFreePhysicalMemorySize()));
+        map.put("osMXBean.getTotalMemorySize", bytesToMBString(osBean.getTotalMemorySize()));
+        map.put("osMXBean.getFreeMemorySize", bytesToMBString(osBean.getFreeMemorySize()));
         map.put("osMXBean.getTotalSwapSpaceSize", bytesToMBString(osBean.getTotalSwapSpaceSize()));
         map.put("osMXBean.getFreeSwapSpaceSize", bytesToMBString(osBean.getFreeSwapSpaceSize()));
-        map.put("osMXBean.getSystemCpuLoad", Double.toString(osBean.getSystemCpuLoad()));
+        map.put("osMXBean.getCpuLoad", Double.toString(osBean.getCpuLoad()));
         map.put("osMXBean.getProcessCpuLoad", Double.toString(osBean.getProcessCpuLoad()));
         map.put("osMXBean.getSystemLoadAverage", Double.toString(osBean.getSystemLoadAverage()));
         map.put("osMXBean.getProcessCpuTime", Double.toString(osBean.getProcessCpuTime()));
