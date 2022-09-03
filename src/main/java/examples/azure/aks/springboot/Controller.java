@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import static java.lang.Runtime.getRuntime;
 import java.lang.management.ManagementFactory;
+import java.math.BigInteger;
 
 @RestController
 public class Controller {
@@ -21,7 +22,7 @@ public class Controller {
     }
 
     @RequestMapping("/primeFactor")
-    public PrimeFactor findFactor(Long number, Boolean logging) {
+    public PrimeFactor findFactor(BigInteger number, Boolean logging) {
         var factorization = new Factorization(Boolean.TRUE.equals(logging));
         var factors = factorization.factors(number).stream().map(n -> n.toString()).collect(Collectors.joining(" * "));
         return new PrimeFactor(number, factors);

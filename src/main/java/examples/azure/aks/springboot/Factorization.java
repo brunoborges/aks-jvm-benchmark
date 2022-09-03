@@ -1,8 +1,9 @@
 package examples.azure.aks.springboot;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,7 +11,6 @@ import org.slf4j.LoggerFactory;
 public class Factorization {
 
     private final boolean logging;
-    private static final long TWO = 2L;
     private static final Logger logger = LoggerFactory.getLogger(Factorization.class);
 
     public Factorization() {
@@ -23,24 +23,24 @@ public class Factorization {
         this.logging = logging;
     }
 
-    public Collection<Long> factors(long n) {
-        var results = new ArrayList<Long>((int) Math.min(1, n / 2));
+    public List<Long> factors(BigInteger n) {
+        var results = new ArrayList<Long>(5);
 
-        while (n % 2L == 0) {
+        while (n.mod(BigInteger.valueOf(2)).intValue() == 0) {
             if (logging) {
                 logger.info("One factor found: " + n);
             }
 
-            results.add(TWO);
-            n /= 2L;
+            results.add(2L);
+            n = n.divide(BigInteger.valueOf(2L));
         }
 
-        for (int i = 3; i <= Math.sqrt(n); i += 2) {
+        for (var i = 3; i <= n.sqrt().longValue(); i += 2) {
             if (logging) {
                 logger.info("Testing other factors with sqrt: " + n);
             }
 
-            while (n % (long) i == 0) {
+            while (n.mod(BigInteger.valueOf(i)).equals(BigInteger.ZERO)) {
                 if (logging) {
                     logger.info("Number 'i' is a factor: " + i);
                 }
@@ -51,23 +51,23 @@ public class Factorization {
                     logger.info("Now divide 'n' for 'i': {}/{}", n, i);
                 }
 
-                n /= i;
+                n = n.divide(BigInteger.valueOf(i));
             }
         }
 
-        if (n > 2) {
+        if (n.compareTo(BigInteger.TWO) > 0) {
             if (logging) {
-                logger.info("Number 'n' still bigger than 2: " + n);
+                logger.info("The last factor is: " + n);
             }
 
-            results.add(n);
+            results.add(n.longValue());
         }
 
         if (logging) {
             logger.info("Returning factors: " + results);
         }
 
-        return Collections.unmodifiableCollection(results);
+        return Collections.unmodifiableList(results);
     }
 
 }

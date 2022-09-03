@@ -1,3 +1,5 @@
 package examples.azure.aks.springboot;
 
-public record PrimeFactor(Long number, String factors) {}
+import java.math.BigInteger;
+
+public record PrimeFactor(BigInteger number, String factors) {}
