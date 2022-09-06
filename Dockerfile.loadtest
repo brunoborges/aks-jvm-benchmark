@@ -1,4 +1,4 @@
-FROM ubuntu:18.04
+FROM ubuntu:20.04
   
 ENV DEBIAN_FRONTEND=noninteractive
 ENV TZ=America/Los_Angeles
@@ -17,4 +17,8 @@ RUN apt-get update && \
 
 RUN git clone --depth=1 https://github.com/giltene/wrk2.git && cd wrk2 && make
 
-ENTRYPOINT ["wrk2/wrk"]
+COPY benchmark.sh /benchmark.sh
+
+ENV PATH=$PATH:/wrk2/wrk2
+
+# ENTRYPOINT ["wrk2/wrk"]

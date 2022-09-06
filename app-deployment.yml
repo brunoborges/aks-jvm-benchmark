@@ -1,24 +1,24 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: springboot
+  name: sampleapp
   labels:
-    app: springboot
+    app: sampleapp
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: springboot
+      app: sampleapp
   template:
     metadata:
       labels:
-        app: springboot
+        app: sampleapp
     spec:
       nodeSelector:
         "beta.kubernetes.io/os": linux
       containers:
-      - name: springboot
-        image: teacr.azurecr.io/springboot:latest
+      - name: sampleapp
+        image: teacr.azurecr.io/sampleapp:latest
         env:
         - name: JAVA_OPTS
           value: "-XX:+UseG1GC -XX:MaxRAMPercentage=70"
@@ -46,5 +46,5 @@ spec:
               - key: "app"
                 operator: In
                 values:
-                - springboot
+                - sampleapp
             topologyKey: "kubernetes.io/hostname"
