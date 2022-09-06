@@ -1,17 +1,20 @@
 package examples.azure.aks.springboot;
 
-import java.util.HashMap;
+import static java.lang.Runtime.getRuntime;
+
+import java.lang.management.ManagementFactory;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-import static java.lang.Runtime.getRuntime;
-import java.lang.management.ManagementFactory;
-import java.math.BigInteger;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class Controller {
@@ -24,16 +27,24 @@ public class Controller {
     @RequestMapping("/primeFactor")
     public PrimeFactor findFactor(BigInteger number, Boolean logging) {
         var factorization = new Factorization(Boolean.TRUE.equals(logging));
+        var start = Instant.now();
         var factors = factorization.factors(number).stream().map(n -> n.toString()).collect(Collectors.joining(" * "));
-        return new PrimeFactor(number, factors);
+        var stop = Instant.now();
+        var duration = Duration.between(start, stop);
+        var durationInBD = BigDecimal.valueOf(duration.toMillis()).divide(BigDecimal.valueOf(1000));
+        return new PrimeFactor(number, factors, durationInBD);
     }
 
     @RequestMapping("/inspect")
     public Map<String, String> inspect() {
         var runtime = getRuntime();
-        var map = new HashMap<String, String>();
+        var map = new TreeMap<String, String>();
+
+        var podIP = System.getenv("MY_POD_IP");
+        map.put("podIP", podIP);
 
         // CPUs and Memory
+
         map.put("availableProcessors", Integer.toString(runtime.availableProcessors()));
         map.put("maxMemory (MB)", Long.toString(runtime.maxMemory() / 1024 / 1024));
         map.put("totalMemory (MB)", Long.toString(runtime.totalMemory() / 1024 / 1024));
@@ -41,7 +52,7 @@ public class Controller {
         // Garbage Collector
         var gcMxBeans = ManagementFactory.getGarbageCollectorMXBeans();
         for (var gcBean : gcMxBeans) {
-            map.put(gcBean.getName(), gcBean.getObjectName().toString());
+            map.put("GC [" + gcBean.getName() + "]", gcBean.getObjectName().toString());
         }
 
         // OperatingSystem MX Bean
@@ -51,7 +62,7 @@ public class Controller {
         map.put("osMXBean.getFreeMemorySize", bytesToMBString(osBean.getFreeMemorySize()));
         map.put("osMXBean.getTotalSwapSpaceSize", bytesToMBString(osBean.getTotalSwapSpaceSize()));
         map.put("osMXBean.getFreeSwapSpaceSize", bytesToMBString(osBean.getFreeSwapSpaceSize()));
-        map.put("osMXBean.getCpuLoad", Double.toString(osBean.getCpuLoad()));
+        map.put("osMXBean.getCpuLoad", Double.toString(osBean.getCpuLoad() * 100.0));
         map.put("osMXBean.getProcessCpuLoad", Double.toString(osBean.getProcessCpuLoad()));
         map.put("osMXBean.getSystemLoadAverage", Double.toString(osBean.getSystemLoadAverage()));
         map.put("osMXBean.getProcessCpuTime", Double.toString(osBean.getProcessCpuTime()));

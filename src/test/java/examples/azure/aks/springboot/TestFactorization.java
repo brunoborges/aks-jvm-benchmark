@@ -31,14 +31,6 @@ public class TestFactorization {
         testEvaluationOfFactorial(map.number());
     }
 
-    @Test
-    public void testRandomNumbers() {
-        for (int i = 0; i < 5; i++) {
-            var input = BigInteger.valueOf((long) Math.random() * 1000000);
-            testEvaluationOfFactorial(input);
-        }
-    }
-
     private void testEvaluationOfFactorial(BigInteger number) {
         try {
             var controller = new Controller();
@@ -58,10 +50,9 @@ public class TestFactorization {
     public static void main(String[] args) {
         var factorization = new Factorization(true);
 
-        // Calculate the factorial of Long.MAX_VALUE
         var start = Instant.now();
         var loopCount = 2;
-        var n = new BigInteger("9223372036854775807");
+        var n = new BigInteger("2189738129317");
         for (int i = 0; i < loopCount - 1; i++) {
             factorization.factors(n);
         }
@@ -70,8 +61,9 @@ public class TestFactorization {
 
         // Print out
         var result = resultList.stream().map((l) -> l.toString()).collect(Collectors.joining(" * "));
-        System.out.println("\nResult: " + new PrimeFactor(n, result));
         var duration = Duration.between(start, stop);
+        var durationInBD = BigDecimal.valueOf(duration.toMillis()).divide(BigDecimal.valueOf(1000));
+        System.out.println("\nResult: " + new PrimeFactor(n, result, durationInBD));
         var secondsPrecise = new BigDecimal(duration.toMillis()).divide(new BigDecimal(1000));
         System.out.println("Duration: " + duration.toMillis() + " ms // " + secondsPrecise + " s");
     }
