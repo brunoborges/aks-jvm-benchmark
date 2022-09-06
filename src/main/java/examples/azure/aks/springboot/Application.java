@@ -9,15 +9,13 @@ import com.microsoft.applicationinsights.attach.ApplicationInsights;
 @SpringBootApplication
 public class Application extends SpringBootServletInitializer {
 
-    static {
+    public static void main(String[] args) {
         try {
             ApplicationInsights.attach();
         } catch (Exception e) {
             System.err.println("Failed to attach Application Insights");
         }
-    }
 
-    public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
     }
 
