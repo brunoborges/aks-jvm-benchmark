@@ -35,6 +35,19 @@ public class Controller {
         return new PrimeFactor(number, factors, durationInBD);
     }
 
+    @RequestMapping("/wait")
+    public String networkWait(Integer duration) {
+        var random = ThreadLocalRandom.current();
+        var randomWait = random.nextInt(2, 50);
+        var totalWait = duration + randomWait;
+        try {
+            Thread.sleep(duration + randomWait);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return "Waited " + totalWait + "ms (random wait: " + randomWait + "ms)";
+    }
+
     @RequestMapping("/inspect")
     public Map<String, String> inspect() {
         var runtime = getRuntime();

@@ -39,34 +39,26 @@ public class Factorization {
             if (logging) {
                 logger.info("Testing other factors with sqrt: " + n);
             }
-
             while (n.mod(BigInteger.valueOf(i)).equals(BigInteger.ZERO)) {
                 if (logging) {
                     logger.info("Number 'i' is a factor: " + i);
                 }
-
                 results.add((long) i);
-
                 if (logging) {
                     logger.info("Now divide 'n' for 'i': {}/{}", n, i);
                 }
-
                 n = n.divide(BigInteger.valueOf(i));
             }
         }
-
         if (n.compareTo(BigInteger.TWO) > 0) {
             if (logging) {
                 logger.info("The last factor is: " + n);
             }
-
             results.add(n.longValue());
         }
-
         if (logging) {
             logger.info("Returning factors: " + results);
         }
-
         return Collections.unmodifiableList(results);
     }
 
