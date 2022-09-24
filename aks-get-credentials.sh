@@ -1,1 +1,2 @@
-az aks get-credentials --resource-group techempower-benchmarks --name TEKubernetes --admin
+az aks get-credentials -n aksjvmlab --admin
+
