@@ -4,9 +4,9 @@ COPY src /tmp/src/
 WORKDIR /tmp/
 RUN mvn package
 
-FROM eclipse-temurin:17
+FROM mcr.microsoft.com/openjdk/jdk:17-ubuntu
 RUN mkdir /usr/local/example
 COPY --from=mavenBuild /tmp/target/*.jar /usr/local/example/example.jar
-COPY start.sh /usr/local/example/start.sh
+COPY containers/start.sh /usr/local/example/start.sh
 
 CMD ["sh", "/usr/local/example/start.sh"]

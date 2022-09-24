@@ -13,12 +13,18 @@ RUN apt-get update && \
     tcl-tclreadline \
     vim-nox \
     wget \
-    zlib1g-dev
+    curl \
+    zlib1g-dev \
+    ca-certificates curl apt-transport-https lsb-release gnupg
+
+RUN curl -sL https://aka.ms/InstallAzureCLIDeb | bash
 
 RUN git clone --depth=1 https://github.com/giltene/wrk2.git && cd wrk2 && make
 
-COPY benchmark.sh /benchmark.sh
+COPY containers/benchmark.sh /benchmark.sh
+COPY deployments /deployments
+COPY kcmds.sh /kcmds.sh
 
-ENV PATH=$PATH:/wrk2/wrk2
+ENV PATH=$PATH:/wrk2
 
-# ENTRYPOINT ["wrk2/wrk"]
+CMD ["bash"]

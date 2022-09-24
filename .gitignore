@@ -10,3 +10,4 @@ target/maven-status/maven-compiler-plugin/testCompile/default-testCompile/inputF
 target/surefire-reports/examples.azure.aks.springboot.TestFactorization.txt
 target/surefire-reports/TEST-examples.azure.aks.springboot.TestFactorization.xml
 target/test-classes/examples/azure/aks/springboot/TestFactorization.class
+target
