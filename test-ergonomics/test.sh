@@ -7,6 +7,9 @@ echo "Starting evaluation with $cpus CPUs and $memory memory."
 
 image='mcr.microsoft.com/openjdk/jdk:17-mariner'
 
+# Compile Hello.java for clean run
+docker run --rm -v "$(pwd)":/usr/src/myapp -w /usr/src/myapp $image javac Hello.java
+
 # Test Default Heap Size
 # See source: https://github.com/openjdk/jdk/blob/46e6e41b9a35c8665eb31be2f8c36bbdcc90564a/src/hotspot/share/runtime/arguments.cpp#L1745
 echo "# Default Heap Size:"
