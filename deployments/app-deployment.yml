@@ -1,35 +1,38 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: sampleapp-parallelgc
+  name: sampleapp-ergonomics
 spec:
   strategy: 
     type: Recreate
-  replicas: 3
+  replicas: 6
   selector:
     matchLabels:
       app: sampleapp
-      version: parallelgc
+      version: ergonomics
   template:
     metadata:
       labels:
         app: sampleapp
-        version: parallelgc
+        version: ergonomics
     spec:
       nodeSelector:
         "kubernetes.io/os": linux
       containers:
-      - name: sampleapp-parallelgc
+      - name: sampleapp-ergonomics
         image: aksjvmlabacr.azurecr.io/sampleapp:latest
         imagePullPolicy: Always
         env:
         - name: APPLICATIONINSIGHTS_CONNECTION_STRING
           value: "InstrumentationKey=1020171d-042f-4fce-b2a5-271f0179ace3;IngestionEndpoint=https://westus2-2.in.applicationinsights.azure.com/;LiveEndpoint=https://westus2.livediagnostics.monitor.azure.com/"
         - name: APPLICATIONINSIGHTS_ROLE_NAME
-          value: "ParallelGC"
+          value: "Ergonomics"
+        - name: APPLICATIONINSIGHTS_PROFILER_ENABLED
+          value: "true"
         - name: JAVA_OPTS
-          value: "-XX:MaxRAMPercentage=75 -XX:+UseParallelGC -XX:ActiveProcessorCount=8" # -Dspring.task.execution.pool.max-size=128 -Dspring.task.execution.pool.queue-capacity=50 -Dspring.task.execution.pool.keep-alive=10s"
-        - name: SPRING_TASK_EXECUTION_POOL_MAX
+          value: "" # -Dspring.task.execution.pool.max-size=128 -Dspring.task.execution.pool.queue-capacity=50 -Dspring.task.execution.pool.keep-alive=10s"
+        - name: JFR
+          value: "" # JFR="-XX:StartFlightRecording=name=sampleapprecording,maxage=5m,filename=sampleapprecording.jfr"
         - name: MY_POD_IP
           valueFrom:
             fieldRef:
@@ -39,62 +42,16 @@ spec:
           name: http
         resources:
           requests:
-            cpu: "2000m"
+            cpu: "1000m"
             memory: "1Gi"
           limits:
-            cpu: "2000m"
-            memory: "1Gi"
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: sampleapp-g1gc
-spec:
-  strategy: 
-    type: Recreate
-  replicas: 3
-  selector:
-    matchLabels:
-      app: sampleapp
-      version: g1gc
-  template:
-    metadata:
-      labels:
-        app: sampleapp
-        version: g1gc
-    spec:
-      nodeSelector:
-        "kubernetes.io/os": linux
-      containers:
-      - name: sampleapp-g1gc
-        image: aksjvmlabacr.azurecr.io/sampleapp:latest
-        imagePullPolicy: Always
-        env:
-        - name: APPLICATIONINSIGHTS_CONNECTION_STRING
-          value: "InstrumentationKey=1020171d-042f-4fce-b2a5-271f0179ace3;IngestionEndpoint=https://westus2-2.in.applicationinsights.azure.com/;LiveEndpoint=https://westus2.livediagnostics.monitor.azure.com/"
-        - name: APPLICATIONINSIGHTS_ROLE_NAME
-          value: "G1GC"
-        - name: JAVA_OPTS
-          value: "-XX:MaxRAMPercentage=75 -XX:+UseG1GC -XX:ActiveProcessorCount=8" # -Dspring.task.execution.pool.max-size=128 -Dspring.task.execution.pool.queue-capacity=50 -Dspring.task.execution.pool.keep-alive=10s"
-        - name: MY_POD_IP
-          valueFrom:
-            fieldRef:
-              fieldPath: status.podIP
-        ports:
-        - containerPort: 8080
-          name: http
-        resources:
-          requests:
-            cpu: "2000m"
-            memory: "1Gi"
-          limits:
-            cpu: "2000m"
+            cpu: "1000m"
             memory: "1Gi"
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: internal-sampleapp-parallelgc
+  name: internal-sampleapp-ergonomics
   annotations:
     service.beta.kubernetes.io/azure-load-balancer-internal: "true"
 spec:
@@ -105,20 +62,4 @@ spec:
     targetPort: 8080
   selector:
     app: sampleapp
-    version: parallelgc
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: internal-sampleapp-g1gc
-  annotations:
-    service.beta.kubernetes.io/azure-load-balancer-internal: "true"
-spec:
-  type: LoadBalancer
-  ports:
-  - port: 80
-    name: http
-    targetPort: 8080
-  selector:
-    app: sampleapp
-    version: g1gc
+    version: ergonomics

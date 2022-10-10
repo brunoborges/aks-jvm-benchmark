@@ -1,0 +1,127 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sampleapp-parallelgc
+spec:
+  strategy: 
+    type: Recreate
+  replicas: 3
+  selector:
+    matchLabels:
+      app: sampleapp
+      version: parallelgc
+  template:
+    metadata:
+      labels:
+        app: sampleapp
+        version: parallelgc
+    spec:
+      nodeSelector:
+        "kubernetes.io/os": linux
+      containers:
+      - name: sampleapp-parallelgc
+        image: aksjvmlabacr.azurecr.io/sampleapp:latest
+        imagePullPolicy: Always
+        env:
+        - name: APPLICATIONINSIGHTS_CONNECTION_STRING
+          value: "InstrumentationKey=1020171d-042f-4fce-b2a5-271f0179ace3;IngestionEndpoint=https://westus2-2.in.applicationinsights.azure.com/;LiveEndpoint=https://westus2.livediagnostics.monitor.azure.com/"
+        - name: APPLICATIONINSIGHTS_ROLE_NAME
+          value: "ParallelGC"
+        - name: APPLICATIONINSIGHTS_PROFILER_ENABLED
+          value: "true"
+        - name: JAVA_OPTS
+          value: "-XX:+UseParallelGC -XX:MaxRAMPercentage=75" # -Dspring.task.execution.pool.max-size=128 -Dspring.task.execution.pool.queue-capacity=50 -Dspring.task.execution.pool.keep-alive=10s"
+        - name: MY_POD_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
+        ports:
+        - containerPort: 8080
+          name: http
+        resources:
+          requests:
+            cpu: "2000m"
+            memory: "1Gi"
+          limits:
+            cpu: "2000m"
+            memory: "1Gi"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sampleapp-g1gc
+spec:
+  strategy: 
+    type: Recreate
+  replicas: 3
+  selector:
+    matchLabels:
+      app: sampleapp
+      version: g1gc
+  template:
+    metadata:
+      labels:
+        app: sampleapp
+        version: g1gc
+    spec:
+      nodeSelector:
+        "kubernetes.io/os": linux
+      containers:
+      - name: sampleapp-g1gc
+        image: aksjvmlabacr.azurecr.io/sampleapp:latest
+        imagePullPolicy: Always
+        env:
+        - name: APPLICATIONINSIGHTS_CONNECTION_STRING
+          value: "InstrumentationKey=1020171d-042f-4fce-b2a5-271f0179ace3;IngestionEndpoint=https://westus2-2.in.applicationinsights.azure.com/;LiveEndpoint=https://westus2.livediagnostics.monitor.azure.com/"
+        - name: APPLICATIONINSIGHTS_ROLE_NAME
+          value: "G1GC"
+        - name: APPLICATIONINSIGHTS_PROFILER_ENABLED
+          value: "true"
+        - name: JAVA_OPTS
+          value: "-XX:+UseG1GC -XX:MaxRAMPercentage=75" # -Dspring.task.execution.pool.max-size=128 -Dspring.task.execution.pool.queue-capacity=50 -Dspring.task.execution.pool.keep-alive=10s"
+        - name: MY_POD_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
+        ports:
+        - containerPort: 8080
+          name: http
+        resources:
+          requests:
+            cpu: "2000m"
+            memory: "1Gi"
+          limits:
+            cpu: "2000m"
+            memory: "1Gi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: internal-sampleapp-parallelgc
+  annotations:
+    service.beta.kubernetes.io/azure-load-balancer-internal: "true"
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 80
+    name: http
+    targetPort: 8080
+  selector:
+    app: sampleapp
+    version: parallelgc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: internal-sampleapp-g1gc
+  annotations:
+    service.beta.kubernetes.io/azure-load-balancer-internal: "true"
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 80
+    name: http
+    targetPort: 8080
+  selector:
+    app: sampleapp
+    version: g1gc
