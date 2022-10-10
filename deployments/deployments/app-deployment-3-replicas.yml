@@ -1,0 +1,92 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sampleapp
+  labels:
+    app: sampleapp
+spec:
+  strategy: 
+    type: Recreate
+  replicas: 3
+  selector:
+    matchLabels:
+      app: sampleapp
+  template:
+    metadata:
+      labels:
+        app: sampleapp
+    spec:
+      nodeSelector:
+        "kubernetes.io/os": linux
+      containers:
+      - name: sampleapp
+        image: aksjvmlabacr.azurecr.io/sampleapp:latest
+        imagePullPolicy: Always
+        env:
+        - name: APPLICATIONINSIGHTS_CONNECTION_STRING
+          value: "InstrumentationKey=1020171d-042f-4fce-b2a5-271f0179ace3;IngestionEndpoint=https://westus2-2.in.applicationinsights.azure.com/;LiveEndpoint=https://westus2.livediagnostics.monitor.azure.com/"
+        - name: JAVA_OPTS
+          value: "-XX:MaxRAMPercentage=70"
+        - name: MY_POD_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
+        ports:
+        - containerPort: 8080
+          name: http
+        resources:
+          requests:
+            cpu: "2000m"
+            memory: "1365Mi" # "512Mi"
+          limits:
+            cpu: "2000m"
+            memory: "1365Mi" # "512Mi"
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 8080
+          timeoutSeconds: 30
+      #affinity:
+      #  podAntiAffinity:
+      #    requiredDuringSchedulingIgnoredDuringExecution:
+      #    - labelSelector:
+      #        matchExpressions:
+      #        - key: "app"
+      #          operator: In
+      #          values:
+      #          - sampleapp
+      #      topologyKey: "kubernetes.io/hostname"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: sampleapp
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 80
+    name: http
+    targetPort: 8080
+  - port: 8080
+    name: spring
+    targetPort: 8080
+  selector:
+    app: sampleapp
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: internal-sampleapp
+  annotations:
+    service.beta.kubernetes.io/azure-load-balancer-internal: "true"
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 80
+    name: http
+    targetPort: 8080
+  - port: 8080
+    name: spring
+    targetPort: 8080
+  selector:
+    app: sampleapp

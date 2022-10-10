@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jdkdbg
+  labels:
+    app: jdkdbg
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: jdkdbg
+  template:
+    metadata:
+      labels:
+        app: jdkdbg
+    spec:
+      hostPID: true
+      nodeSelector:
+        "kubernetes.io/os": linux
+      containers:
+      - name: jdkdbg
+        image: mcr.microsoft.com/openjdk/jdk:17-ubuntu
+        tty: true
+        resources:
+          requests:
+            cpu: "500m"
+            memory: "128Mi"
+          limits:
+            cpu: "1000m"
+            memory: "128Mi"
+        command: [ "/bin/bash", "-c", "--" ]
+        args: [ "while true; do sleep 30; done;" ]
+        securityContext:
+          privileged: true
