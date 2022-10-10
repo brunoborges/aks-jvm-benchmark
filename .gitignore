@@ -18,3 +18,4 @@ small-image-test/Dockerfile.vanilla
 small-image-test/Hello.class
 small-image-test/Hello.java
 small-image-test/myapp.jar
+test-ergonomics/Hello.class
