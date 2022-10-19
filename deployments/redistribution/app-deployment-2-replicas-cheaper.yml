@@ -27,7 +27,7 @@ spec:
           value: "InstrumentationKey=1020171d-042f-4fce-b2a5-271f0179ace3;IngestionEndpoint=https://westus2-2.in.applicationinsights.azure.com/;LiveEndpoint=https://westus2.livediagnostics.monitor.azure.com/"
         - name: APPLICATIONINSIGHTS_ROLE_NAME
           value: "Optimized"
-        - name: APPLICATIONINSIGHTS_PROFILER_ENABLED
+        - name: APPLICATIONINSIGHTS_PREVIEW_PROFILER_ENABLED
           value: "true"
         - name: JAVA_OPTS
           value: "-XX:+UseParallelGC -XX:MaxRAMPercentage=70"

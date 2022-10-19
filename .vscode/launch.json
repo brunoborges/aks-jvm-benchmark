@@ -2,6 +2,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "Launch AvailableProcessors",
+            "request": "launch",
+            "mainClass": "examples.azure.aks.springboot.AvailableProcessors",
+            "projectName": "aks-springboot"
+        },
+        {
+            "type": "java",
             "name": "Launch TestFactorization",
             "request": "launch",
             "mainClass": "examples.azure.aks.springboot.TestFactorization",

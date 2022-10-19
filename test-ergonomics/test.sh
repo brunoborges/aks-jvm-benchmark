@@ -28,3 +28,4 @@ docker run --memory=$memory --cpus=$cpus -v `pwd`:/app $image 2>/dev/null \
 
 # Bugs:
 # - https://bugs.openjdk.org/browse/JDK-8278492
+

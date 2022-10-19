@@ -27,7 +27,7 @@ spec:
           value: "InstrumentationKey=1020171d-042f-4fce-b2a5-271f0179ace3;IngestionEndpoint=https://westus2-2.in.applicationinsights.azure.com/;LiveEndpoint=https://westus2.livediagnostics.monitor.azure.com/"
         - name: APPLICATIONINSIGHTS_ROLE_NAME
           value: "ParallelGC"
-        - name: APPLICATIONINSIGHTS_PROFILER_ENABLED
+        - name: APPLICATIONINSIGHTS_PREVIEW_PROFILER_ENABLED
           value: "true"
         - name: JAVA_OPTS
           value: "-XX:+UseParallelGC -XX:MaxRAMPercentage=75" # -Dspring.task.execution.pool.max-size=128 -Dspring.task.execution.pool.queue-capacity=50 -Dspring.task.execution.pool.keep-alive=10s"
@@ -75,7 +75,7 @@ spec:
           value: "InstrumentationKey=1020171d-042f-4fce-b2a5-271f0179ace3;IngestionEndpoint=https://westus2-2.in.applicationinsights.azure.com/;LiveEndpoint=https://westus2.livediagnostics.monitor.azure.com/"
         - name: APPLICATIONINSIGHTS_ROLE_NAME
           value: "G1GC"
-        - name: APPLICATIONINSIGHTS_PROFILER_ENABLED
+        - name: APPLICATIONINSIGHTS_PREVIEW_PROFILER_ENABLED
           value: "true"
         - name: JAVA_OPTS
           value: "-XX:+UseG1GC -XX:MaxRAMPercentage=75" # -Dspring.task.execution.pool.max-size=128 -Dspring.task.execution.pool.queue-capacity=50 -Dspring.task.execution.pool.keep-alive=10s"
