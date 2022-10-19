@@ -30,7 +30,7 @@ spec:
         - name: APPLICATIONINSIGHTS_PREVIEW_PROFILER_ENABLED
           value: "true"
         - name: JAVA_OPTS
-          value: "-XX:+UseSerialGC -XX:MaxRAMPercentage=70"
+          value: "-XX:MaxRAMPercentage=70"
         - name: JFR
           value: "" # JFR="-XX:StartFlightRecording=name=sampleapprecording,maxage=5m,filename=sampleapprecording.jfr"
         - name: MY_POD_IP
