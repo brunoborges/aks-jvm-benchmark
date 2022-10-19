@@ -3,8 +3,6 @@ kind: Deployment
 metadata:
   name: sampleapp-ergonomics
 spec:
-  strategy: 
-    type: Recreate
   replicas: 6
   selector:
     matchLabels:
@@ -30,9 +28,7 @@ spec:
         - name: APPLICATIONINSIGHTS_PREVIEW_PROFILER_ENABLED
           value: "true"
         - name: JAVA_OPTS
-          value: "-XX:MaxRAMPercentage=75" # -Dspring.task.execution.pool.max-size=128 -Dspring.task.execution.pool.queue-capacity=50 -Dspring.task.execution.pool.keep-alive=10s"
-        - name: JFR
-          value: "" # JFR="-XX:StartFlightRecording=name=sampleapprecording,maxage=5m,filename=sampleapprecording.jfr"
+          value: ""
         - name: MY_POD_IP
           valueFrom:
             fieldRef:
@@ -47,6 +43,8 @@ spec:
           limits:
             cpu: "1000m"
             memory: "1Gi"
+# Spring Boot tuning example
+# -Dspring.task.execution.pool.max-size=128 -Dspring.task.execution.pool.queue-capacity=50 -Dspring.task.execution.pool.keep-alive=10s"
 ---
 apiVersion: v1
 kind: Service
