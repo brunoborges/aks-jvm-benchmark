@@ -49,9 +49,13 @@ public class Controller {
     }
 
     @RequestMapping("/inspect")
-    public Map<String, String> inspect() {
-        var runtime = getRuntime();
+    public Map<String, String> inspect() throws ClassNotFoundException {
         var map = new TreeMap<String, String>();
+        var runtime = getRuntime();
+
+        // Current GC
+        var gcIdentifier = new IdentifyCurrentGC();
+        map.put("Running GC", gcIdentifier.getCurrentGC().name());
 
         var podIP = System.getenv("MY_POD_IP");
         map.put("podIP", podIP);
