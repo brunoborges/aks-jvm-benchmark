@@ -12,16 +12,16 @@ FROM mcr.microsoft.com/openjdk/jdk:17-mariner AS mavenBuild
         mkdir /staging
         # && tdnf install -y --releasever=2.0 --installroot /staging fontconfig freefont dejavu-sans-fonts dejavu-serif-fonts dejavu-sans-mono-fonts 
 
-    RUN rm -rf /staging/etc/dnf \
-        && rm -rf /staging/run/* \
-        && rm -rf /staging/var/cache/dnf \
-        && find /staging/var/log -type f -size +0 -delete
+    # RUN rm -rf /staging/etc/dnf \
+        # && rm -rf /staging/run/* \
+        # && rm -rf /staging/var/cache/dnf \
+        # && find /staging/var/log -type f -size +0 -delete
 
 ###############
 # Runtime image
 FROM mcr.microsoft.com/openjdk/jdk:17-distroless
 
     COPY --from=mavenBuild /tmp/target/*.jar /example.jar
-    COPY --from=mavenBuild /staging/ /
+    # COPY --from=mavenBuild /staging/ /
 
     CMD ["-jar", "/example.jar"]
