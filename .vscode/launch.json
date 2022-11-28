@@ -2,6 +2,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "Launch IdentifyCurrentGC",
+            "request": "launch",
+            "mainClass": "examples.azure.aks.springboot.IdentifyCurrentGC",
+            "projectName": "aks-springboot"
+        },
+        {
+            "type": "java",
             "name": "Launch AvailableProcessors",
             "request": "launch",
             "mainClass": "examples.azure.aks.springboot.AvailableProcessors",
