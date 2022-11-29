@@ -69,7 +69,8 @@ public class IdentifyCurrentGC {
             var mh2 = publicLookup.findVirtual(VMOptionClazz, "getValue", mt2);
             return (String) mh2.invokeWithArguments(vmOption);
         } catch (Throwable e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
+            return null;
         }
     }
 
