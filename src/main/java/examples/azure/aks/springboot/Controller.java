@@ -87,6 +87,9 @@ public class Controller {
 
         map.put("cpu_shares", System.getProperty("cpushares"));
 
+        // current user
+        map.put("user.name", System.getProperty("user.name"));
+
         return map;
     }
 
