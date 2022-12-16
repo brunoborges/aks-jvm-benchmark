@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: sampleapp-ergonomics
 spec:
-  replicas: 6
+  replicas: 2
   selector:
     matchLabels:
       app: sampleapp
@@ -28,7 +28,7 @@ spec:
         - name: APPLICATIONINSIGHTS_PREVIEW_PROFILER_ENABLED
           value: "true"
         - name: JAVA_OPTS
-          value: ""
+          value: "-XX:+UseParallelGC -XX:MaxRAMPercentage=70"
         - name: MY_POD_IP
           valueFrom:
             fieldRef:
@@ -38,11 +38,11 @@ spec:
           name: http
         resources:
           requests:
-            cpu: "1000m"
-            memory: "1Gi"
+            cpu: "3000m"
+            memory: "3Gi"
           limits:
-            cpu: "1000m"
-            memory: "1Gi"
+            cpu: "3000m"
+            memory: "3Gi"
 # Spring Boot tuning example
 # -Dspring.task.execution.pool.max-size=128 -Dspring.task.execution.pool.queue-capacity=50 -Dspring.task.execution.pool.keep-alive=10s"
 ---
