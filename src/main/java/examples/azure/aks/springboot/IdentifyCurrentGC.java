@@ -1,6 +1,5 @@
 package examples.azure.aks.springboot;
 
-import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
 import java.lang.management.ManagementFactory;
@@ -27,14 +26,14 @@ public class IdentifyCurrentGC {
         }
     }
 
-    private final Class VMOptionClazz, HotSpotDiagnosticMXBeanClazz;
+    private final Class<?> VMOptionClazz, HotSpotDiagnosticMXBeanClazz;
 
     public IdentifyCurrentGC() throws ClassNotFoundException {
         VMOptionClazz = Class.forName("com.sun.management.VMOption");
         HotSpotDiagnosticMXBeanClazz = Class.forName("com.sun.management.HotSpotDiagnosticMXBean");
     }
 
-    public GCType getCurrentGC() {
+    public GCType identifyGC() {
         try {
             var flags = Arrays.asList(GCType.values());
             var flagSettings = new TreeMap<GCType, String>();
@@ -50,9 +49,8 @@ public class IdentifyCurrentGC {
                     .findFirst()
                     .orElse(GCType.Unknown);
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
-        return GCType.Unknown;
     }
 
     private String getVMOption(String vmOptionName) {
@@ -61,16 +59,19 @@ public class IdentifyCurrentGC {
         try {
             var publicLookup = MethodHandles.publicLookup();
             var mt = MethodType.methodType(VMOptionClazz, String.class);
-            var getVMOption = publicLookup
-                    .findVirtual(HotSpotDiagnosticMXBeanClazz, "getVMOption", mt);
+            var getVMOption = publicLookup.findVirtual(HotSpotDiagnosticMXBeanClazz, "getVMOption", mt);
             var vmOption = getVMOption.invokeWithArguments(hotspotMBean, vmOptionName);
 
             var mt2 = MethodType.methodType(String.class);
             var mh2 = publicLookup.findVirtual(VMOptionClazz, "getValue", mt2);
             return (String) mh2.invokeWithArguments(vmOption);
+        } catch (IllegalArgumentException e) {
+            if (e.getMessage().contains("does not exist")) {
+                return null;
+            }
+            throw e;
         } catch (Throwable e) {
-            e.printStackTrace();
-            return null;
+            throw new RuntimeException(e);
         }
     }
 

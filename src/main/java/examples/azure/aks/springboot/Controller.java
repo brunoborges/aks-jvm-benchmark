@@ -55,7 +55,7 @@ public class Controller {
 
         // Current GC
         var gcIdentifier = new IdentifyCurrentGC();
-        map.put("Running GC", gcIdentifier.getCurrentGC().name());
+        map.put("Running GC", gcIdentifier.identifyGC().name());
 
         var podIP = System.getenv("MY_POD_IP");
         map.put("podIP", podIP);
