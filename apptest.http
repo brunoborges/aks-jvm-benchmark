@@ -1,4 +1,4 @@
-@port = 8081
+@port = 8080
 
 ### Trigger /inspect
 GET http://localhost:{{port}}/inspect HTTP/1.1

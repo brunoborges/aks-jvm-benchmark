@@ -79,7 +79,7 @@ public class IdentifyCurrentGC {
 
     private void initHotspotMBean() {
         if (hotspotMBean == null) {
-            synchronized (Controller.class) {
+            synchronized (RESTController.class) {
                 if (hotspotMBean == null) {
                     hotspotMBean = getHotspotMBean();
                 }

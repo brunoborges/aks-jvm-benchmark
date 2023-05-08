@@ -21,7 +21,7 @@ public class TestFactorization {
         var input = BigInteger.valueOf(100L);
         var expectedFactorization = "2 * 2 * 5 * 5";
 
-        var controller = new Controller();
+        var controller = new RESTController();
         var map = controller.findFactor(input, true);
 
         assertFalse(map == null);
@@ -33,7 +33,7 @@ public class TestFactorization {
 
     private void testEvaluationOfFactorial(BigInteger number) {
         try {
-            var controller = new Controller();
+            var controller = new RESTController();
             var map = controller.findFactor(number, true);
 
             var mgr = new ScriptEngineManager();

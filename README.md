@@ -7,3 +7,7 @@ This project is used as an exercise for evaluating different deployment styles (
 
 ## Generate HdrHistogram chart
 See: http://hdrhistogram.github.io/HdrHistogram/plotFiles.html
+
+## Build the containers locally
+
+## Push the containers to Azure Container Registry
