@@ -19,7 +19,7 @@ spec:
         "kubernetes.io/os": linux
       containers:
       - name: jdkdbg
-        image: mcr.microsoft.com/openjdk/jdk:17-ubuntu
+        image: mcr.microsoft.com/openjdk/jdk:21-ubuntu
         tty: true
         resources:
           requests:

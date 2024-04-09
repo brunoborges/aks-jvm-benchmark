@@ -1,7 +1,7 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: ingress-sampleapp-ergonomics
+  name: ingress-sampleapp
   annotations:
     service.beta.kubernetes.io/azure-load-balancer-internal: "true"
 spec:

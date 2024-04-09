@@ -4,6 +4,7 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,6 +16,12 @@ public class Factorization {
 
     public Factorization() {
         this(false);
+    }
+
+    public void findNewRandomFactor() {
+        var random = new Random();
+        var factor = random.nextInt(100);
+        logger.info("New random factor: {}", factor);
     }
 
     public Factorization(boolean logging) {

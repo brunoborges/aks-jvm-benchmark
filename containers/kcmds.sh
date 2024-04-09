@@ -28,3 +28,9 @@ kmemory() {
   kubectl patch deployment sampleapp --type='json' -p=${jsonobj}
   kwait
 }
+
+kdeploy() {
+  kubectl delete -f deployment.yml
+  kubectl apply -f deployment.yml
+  kwait
+}

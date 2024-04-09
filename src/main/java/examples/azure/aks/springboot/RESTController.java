@@ -7,6 +7,8 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.ThreadLocalRandom;
@@ -26,6 +28,9 @@ public class RESTController {
 
     @RequestMapping("/primeFactor")
     public PrimeFactor findFactor(BigInteger number, Boolean logging) {
+        if (number == null) {
+            number = BigInteger.valueOf(100L);
+        }
         var factorization = new Factorization(Boolean.TRUE.equals(logging));
         var start = Instant.now();
         var factors = factorization.factors(number).stream().map(n -> n.toString()).collect(Collectors.joining(" * "));
@@ -33,6 +38,13 @@ public class RESTController {
         var duration = Duration.between(start, stop);
         var durationInBD = BigDecimal.valueOf(duration.toMillis()).divide(BigDecimal.valueOf(1000));
         return new PrimeFactor(number, factors, durationInBD);
+    }
+
+    @RequestMapping("/waitWithPrimeFactor")
+    public String networkWaitWithPrime(Integer duration, BigInteger number) {
+        var primeFactor = findFactor(number, false);
+        networkWait(duration);
+        return "Waited " + duration + "ms and found factors for " + number + ": " + primeFactor;
     }
 
     @RequestMapping("/wait")
@@ -105,5 +117,16 @@ public class RESTController {
 
     private static int randomNumber() {
         return ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE);
+    }
+
+    @RequestMapping("/generateRandomNumbers")
+    @ResponseBody
+    List<Integer> generateRandomNumbers(int amount, int bound) {
+        var random = ThreadLocalRandom.current();
+        var numbers = new ArrayList<Integer>(amount);
+        for (int i = 0; i < amount; i++) {
+            numbers.add(random.nextInt(bound));
+        }
+        return numbers;
     }
 }

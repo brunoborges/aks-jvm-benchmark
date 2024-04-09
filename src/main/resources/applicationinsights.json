@@ -1,5 +1,5 @@
 {
-    "connectionString": "",
+    "connectionString": "InstrumentationKey=fa718877-7894-43ac-bbc2-9bbb90f25bf3;IngestionEndpoint=https://eastus-8.in.applicationinsights.azure.com/;LiveEndpoint=https://eastus.livediagnostics.monitor.azure.com/",
     "role": {
         "name": "SampleApp"
     }

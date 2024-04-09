@@ -17,7 +17,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.0.6</version>
+        <version>3.2.4</version>
         <relativePath /> <!-- lookup parent from repository -->
     </parent>
 
@@ -40,7 +40,7 @@
         <dependency>
             <groupId>com.microsoft.azure</groupId>
             <artifactId>applicationinsights-runtime-attach</artifactId>
-            <version>3.4.12</version>
+            <version>3.5.1</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -67,7 +67,7 @@
             </plugin>
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>3.1.0</version>
+                <version>3.2.5</version>
             </plugin>
         </plugins>
     </build>

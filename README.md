@@ -8,6 +8,22 @@ This project is used as an exercise for evaluating different deployment styles (
 ## Generate HdrHistogram chart
 See: http://hdrhistogram.github.io/HdrHistogram/plotFiles.html
 
-## Build the containers locally
 
-## Push the containers to Azure Container Registry
+### Script
+
+#### Comparing different JVM settings
+
+Start the benchmark with this script:
+
+```bash
+wrk -t10 -c50 -d5m -R3000 -L http://internal-nginx.default.svc.cluster.local/json
+```
+
+
+#### Comparing different resource configurations
+
+Start the benchmark with this script:
+
+```bash
+wrk -t10 -c50 -d5m -R3000 -L http://internal-nginx.default.svc.cluster.local/json
+```

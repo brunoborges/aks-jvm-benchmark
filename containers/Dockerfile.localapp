@@ -1,6 +1,0 @@
-FROM mcr.microsoft.com/openjdk/jdk:17-ubuntu
-RUN mkdir /usr/local/example
-COPY target/*.jar /usr/local/example/example.jar
-COPY start.sh /usr/local/example/start.sh
-
-CMD ["sh", "/usr/local/example/start.sh"]

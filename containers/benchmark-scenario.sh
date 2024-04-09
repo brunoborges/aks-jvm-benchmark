@@ -1,6 +1,12 @@
-#!/bin/bash
+#!/bin/sh
 
 ARGS=""
+
+# Call benchmark-utils passing all arguments that were passed to this shell in command line.
+# This will set all variables that were passed to this shell.
+# For example: ./benchmark.sh -u http://localhost:8080/json -t 10 -c 100 -w 10s -d 60s -o 2s
+# will set URL=http://localhost:8080/json, THREADS=10, CONNECTIONS=100, WARMUP=10s, DURATION=60s, TIMEOUT=2s
+. benchmark-utils.sh "$@"
 
 while (( "$#" )); do
   case "$1" in
@@ -83,7 +89,7 @@ durw=${WARMUP:-"10s"}
 dur=${DURATION:-"60s"}
 timeout=${TIMEOUT:-"2s"}
 
-. ./kcmds.sh
+. kcmds.sh
 
 warmup() {
   echo "WARMUP-BEGIN Warming up for $durw..."
@@ -103,5 +109,39 @@ load() {
   echo "---"
 }
 
-warmup
-load
+benchmark() {
+  echo "Waiting for 10 seconds before starting benchmark..."
+  sleep 10
+  echo "Done."
+  warmup
+  load
+}
+
+kdeploy() {
+  kubectl delete -f deployment.yml
+  kubectl apply -f deployment.yml
+  kwait
+}
+
+# Deploy App
+kdeploy
+
+echo "# SCENARIO A: 1 Instance // 1 CPU"
+echo "## BENCHMARK RESULTS"
+benchmark
+
+echo "# SCENARIO B: 2 Instances // 1 CPU"
+kreplicas "2"
+echo "## BENCHMARK RESULTS"
+benchmark
+
+echo "# SCENARIO C: 1 Instance // 2 CPUs"
+kreplicas 1
+kscalecpu "2000m"
+echo "## BENCHMARK RESULTS"
+benchmark
+
+echo "# SCENARIO D: 2 Instances // 2 CPUs"
+kreplicas 2
+echo "## BENCHMARK RESULTS"
+benchmark

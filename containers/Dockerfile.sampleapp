@@ -1,7 +1,6 @@
 #############
 # Build layer
-#############
-FROM mcr.microsoft.com/openjdk/jdk:17-mariner AS mavenBuild
+FROM mcr.microsoft.com/openjdk/jdk:21-mariner AS mavenBuild
 
     COPY pom.xml /tmp/
     COPY src /tmp/src/
@@ -10,14 +9,12 @@ FROM mcr.microsoft.com/openjdk/jdk:17-mariner AS mavenBuild
 
     WORKDIR /tmp/
 
-    RUN ./mvnw package && mkdir /staging
+    RUN ./mvnw package && \
+        mkdir /staging
 
-#--------------
 # Runtime image
-#--------------
-FROM mcr.microsoft.com/openjdk/jdk:17-distroless
+FROM mcr.microsoft.com/openjdk/jdk:21-distroless
 
     COPY --from=mavenBuild /tmp/target/*.jar /example.jar
-    # COPY --from=mavenBuild /staging/ /
 
     CMD ["-jar", "/example.jar"]

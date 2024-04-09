@@ -18,7 +18,7 @@ spec:
         "kubernetes.io/os": linux
       containers:
       - name: loadtest
-        image: aksjvmlabacr.azurecr.io/loadtest:latest
+        image: devnexus2024.azurecr.io/loadtest:latest
         ports:
         - containerPort: 8080
           name: http

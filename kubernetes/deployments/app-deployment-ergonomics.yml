@@ -18,17 +18,15 @@ spec:
         "kubernetes.io/os": linux
       containers:
       - name: sampleapp-ergonomics
-        image: aksjvmlabacr.azurecr.io/sampleapp:latest
+        image: devnexus2024.azurecr.io/sampleapp:latest
         imagePullPolicy: Always
         env:
         - name: APPLICATIONINSIGHTS_CONNECTION_STRING
-          value: "InstrumentationKey=1020171d-042f-4fce-b2a5-271f0179ace3;IngestionEndpoint=https://westus2-2.in.applicationinsights.azure.com/;LiveEndpoint=https://westus2.livediagnostics.monitor.azure.com/"
+          value: "InstrumentationKey=fa718877-7894-43ac-bbc2-9bbb90f25bf3;IngestionEndpoint=https://eastus-8.in.applicationinsights.azure.com/;LiveEndpoint=https://eastus.livediagnostics.monitor.azure.com/"
         - name: APPLICATIONINSIGHTS_ROLE_NAME
           value: "Ergonomics"
         - name: APPLICATIONINSIGHTS_PREVIEW_PROFILER_ENABLED
           value: "true"
-        - name: JAVA_OPTS
-          value: "-XX:+UseParallelGC -XX:MaxRAMPercentage=70"
         - name: MY_POD_IP
           valueFrom:
             fieldRef:
@@ -38,24 +36,24 @@ spec:
           name: http
         resources:
           requests:
-            cpu: "3000m"
-            memory: "3Gi"
+            cpu: "1000m"
+            memory: "1Gi"
           limits:
-            cpu: "3000m"
-            memory: "3Gi"
-# Spring Boot tuning example
-# -Dspring.task.execution.pool.max-size=128 -Dspring.task.execution.pool.queue-capacity=50 -Dspring.task.execution.pool.keep-alive=10s"
+            cpu: "1000m"
+            memory: "1Gi"
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: internal-sampleapp-ergonomics
+  labels: 
+    service: sampleappfront
   annotations:
     service.beta.kubernetes.io/azure-load-balancer-internal: "true"
 spec:
   type: LoadBalancer
   ports:
-  - port: 80
+  - port: 8080
     name: http
     targetPort: 8080
   selector:
