@@ -1,16 +1,22 @@
 @port = 8080
 
-### Trigger /inspect
-GET http://localhost:{{port}}/inspect HTTP/1.1
+@server = http://localhost:{{port}}
 
 ### Trigger /
-GET http://localhost:{{port}}/ HTTP/1.1
+GET {{server}}/ HTTP/1.1
+
+### Trigger /json
+GET {{server}}/json HTTP/1.1
+
+### Trigger /inspect
+GET {{server}}/inspect HTTP/1.1
 
 ### Trigger /primeFactor
-GET http://localhost:{{port}}/primeFactor?number=99277332291281731 HTTP/1.1
+GET {{server}}/primeFactor?number=99277332291281731 HTTP/1.1
 
 ### Trigger /primeFactor WITH LOGGING
 GET http://localhost:{{port}}/primeFactor?number=927398173&logging=true HTTP/1.1
 
-### Trigger /json
-GET http://localhost:{{port}}/json HTTP/1.1
+### Trigger /waitWithPrimeFactor
+GET {{server}}/waitWithPrimeFactor?duration=500&number=927398173 HTTP/1.1
+

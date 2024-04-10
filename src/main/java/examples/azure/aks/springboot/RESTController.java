@@ -14,6 +14,7 @@ import java.util.TreeMap;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -21,12 +22,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class RESTController {
 
-    @RequestMapping("/")
+    @GetMapping("/")
     public String helloWorld() {
         return "Hello World";
     }
 
-    @RequestMapping("/primeFactor")
+    @GetMapping("/primeFactor")
     public PrimeFactor findFactor(BigInteger number, Boolean logging) {
         if (number == null) {
             number = BigInteger.valueOf(100L);
@@ -40,14 +41,17 @@ public class RESTController {
         return new PrimeFactor(number, factors, durationInBD);
     }
 
-    @RequestMapping("/waitWithPrimeFactor")
+    @GetMapping("/waitWithPrimeFactor")
     public String networkWaitWithPrime(Integer duration, BigInteger number) {
         var primeFactor = findFactor(number, false);
-        networkWait(duration);
-        return "Waited " + duration + "ms and found factors for " + number + ": " + primeFactor;
+        StringBuilder sb = new StringBuilder();
+        sb.append(networkWait(duration));
+        sb.append("\n");
+        sb.append("Found factors for " + number + ": " + primeFactor);
+        return sb.toString();
     }
 
-    @RequestMapping("/wait")
+    @GetMapping("/wait")
     public String networkWait(Integer duration) {
         var random = ThreadLocalRandom.current();
         var randomWait = random.nextInt(2, 50);
@@ -60,7 +64,7 @@ public class RESTController {
         return "Waited " + totalWait + "ms (random wait: " + randomWait + "ms)";
     }
 
-    @RequestMapping("/inspect")
+    @GetMapping("/inspect")
     public Map<String, String> inspect() throws ClassNotFoundException {
         var map = new TreeMap<String, String>();
         var runtime = getRuntime();
@@ -109,7 +113,7 @@ public class RESTController {
         return Long.toString(bytes / 1024 / 1024) + " MB";
     }
 
-    @RequestMapping("/json")
+    @GetMapping("/json")
     @ResponseBody
     Map<String, String> json() {
         return Map.of("message", "Hello, World!", "randomNumber", Integer.toString(randomNumber()));
@@ -119,7 +123,7 @@ public class RESTController {
         return ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE);
     }
 
-    @RequestMapping("/generateRandomNumbers")
+    @GetMapping("/generateRandomNumbers")
     @ResponseBody
     List<Integer> generateRandomNumbers(int amount, int bound) {
         var random = ThreadLocalRandom.current();
