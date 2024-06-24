@@ -24,7 +24,6 @@ RUN git clone --depth=1 https://github.com/giltene/wrk2.git && cd wrk2 && make
 COPY containers/benchmark.sh /benchmark.sh
 COPY containers/kcmds.sh /kcmds.sh
 COPY kubernetes /kubernetes/
-COPY kcmds.sh /kcmds.sh
 
 ENV PATH=$PATH:/wrk2
 

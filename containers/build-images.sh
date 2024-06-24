@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # Build the sample app
-az acr build --registry devnexus2024 --image sampleapp:latest -f Dockerfile.sampleapp ../
+az acr build --registry devsummit2024 --image sampleapp:latest -f Dockerfile.sampleapp ../
 
 # Build the load tester
-az acr build --registry devnexus2024 --image loadtest:latest -f Dockerfile.loadtest ../
+az acr build --registry devsummit2024 --image loadtest:latest -f Dockerfile.loadtest ../

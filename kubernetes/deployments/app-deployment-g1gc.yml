@@ -18,16 +18,16 @@ spec:
         "kubernetes.io/os": linux
       containers:
       - name: sampleapp-g1gc
-        image: devnexus2024.azurecr.io/sampleapp:latest
+        image: devsummit2024.azurecr.io/sampleapp:latest
         imagePullPolicy: Always
         env:
         - name: APPLICATIONINSIGHTS_CONNECTION_STRING
-          value: "InstrumentationKey=fa718877-7894-43ac-bbc2-9bbb90f25bf3;IngestionEndpoint=https://eastus-8.in.applicationinsights.azure.com/;LiveEndpoint=https://eastus.livediagnostics.monitor.azure.com/"
+          value: "InstrumentationKey=5ce2cefa-9a39-48d1-9285-9171aff833db;IngestionEndpoint=https://eastus-8.in.applicationinsights.azure.com/;LiveEndpoint=https://eastus.livediagnostics.monitor.azure.com/;ApplicationId=f677e22a-9701-4c50-b259-28a40824ab12"
         - name: APPLICATIONINSIGHTS_ROLE_NAME
           value: "G1GC"
         - name: APPLICATIONINSIGHTS_PREVIEW_PROFILER_ENABLED
           value: "true"
-        - name: JAVA_OPTS
+        - name: JAVA_TOOL_OPTIONS
           value: "-XX:+UseG1GC -XX:MaxRAMPercentage=70"
         - name: MY_POD_IP
           valueFrom:
@@ -53,7 +53,7 @@ metadata:
 spec:
   type: LoadBalancer
   ports:
-  - port: 80
+  - port: 8080
     name: http
     targetPort: 8080
   selector:

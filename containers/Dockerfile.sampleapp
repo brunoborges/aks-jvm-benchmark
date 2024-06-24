@@ -1,6 +1,6 @@
 #############
 # Build layer
-FROM mcr.microsoft.com/openjdk/jdk:21-mariner AS mavenBuild
+FROM mcr.microsoft.com/openjdk/jdk:21-ubuntu AS mavenBuild
 
     COPY pom.xml /tmp/
     COPY src /tmp/src/
@@ -13,8 +13,8 @@ FROM mcr.microsoft.com/openjdk/jdk:21-mariner AS mavenBuild
         mkdir /staging
 
 # Runtime image
-FROM mcr.microsoft.com/openjdk/jdk:21-distroless
+FROM mcr.microsoft.com/openjdk/jdk:21-ubuntu
 
     COPY --from=mavenBuild /tmp/target/*.jar /example.jar
 
-    CMD ["-jar", "/example.jar"]
+    CMD ["java", "-jar", "/example.jar"]

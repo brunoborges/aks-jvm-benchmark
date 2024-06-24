@@ -79,12 +79,19 @@ public class IdentifyCurrentGC {
 
     private void initHotspotMBean() {
         if (hotspotMBean == null) {
-            synchronized (RESTController.class) {
+            synchronized (IdentifyCurrentGC.class) {
                 if (hotspotMBean == null) {
                     hotspotMBean = getHotspotMBean();
                 }
             }
         }
+    }
+
+    // main
+    public static void main(String[] args) throws ClassNotFoundException {
+        IdentifyCurrentGC identifyCurrentGC = new IdentifyCurrentGC();
+        GCType gcType = identifyCurrentGC.identifyGC();
+        System.out.println("Current GC Type: " + gcType);
     }
 
 }

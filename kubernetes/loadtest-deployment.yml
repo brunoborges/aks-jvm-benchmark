@@ -18,7 +18,7 @@ spec:
         "kubernetes.io/os": linux
       containers:
       - name: loadtest
-        image: devnexus2024.azurecr.io/loadtest:latest
+        image: devsummit2024.azurecr.io/loadtest:latest
         ports:
         - containerPort: 8080
           name: http
@@ -31,4 +31,3 @@ spec:
             memory: "8Gi"
         command: [ "/bin/bash", "-c", "--" ]
         args: [ "while true; do sleep 30; done;" ]
-  

@@ -1,7 +1,7 @@
-RESOURCE_GROUP=brborges
-ACR_NAME=brborgesacr
-AKS_NAME=brborgesaks
+RESOURCE_GROUP=devsummit2024
+ACR_NAME=devsummit2024
+AKS_NAME=devsummit2024
 AKS_NODE_COUNT=1
 AKS_NODE_VM_SIZE=Standard_B2s
 AKS_NODE_DISK_SIZE=30
-AKS_SERVICE_PRINCIPAL_NAME=brborgesaksServicePrincipal
+AKS_SERVICE_PRINCIPAL_NAME=brborgesAksServicePrincipal
