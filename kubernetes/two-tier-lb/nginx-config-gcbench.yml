@@ -1,19 +1,16 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: nginx-config
+  name: nginx-config-gcbench
 data:
   nginx.conf: |
     events {}
 
     http {
       upstream backend {
-        # round robin by default across all internal load balancers
-        # server internal-sampleapp-2by2.default.svc.cluster.local:8080;
-        # server internal-sampleapp-2by3.default.svc.cluster.local:8080;
-        # server internal-sampleapp-3by2.default.svc.cluster.local:8080;
-        # server internal-sampleapp-6by1.default.svc.cluster.local:8080;
-
+        # round robin by default across all internal load balancers. 
+        # Uncomment least_conn below to enable least connections
+        # least_conn;
         server internal-sampleapp-ergonomics.default.svc.cluster.local:8080;
         server internal-sampleapp-g1gc.default.svc.cluster.local:8080;
         server internal-sampleapp-pgc.default.svc.cluster.local:8080;

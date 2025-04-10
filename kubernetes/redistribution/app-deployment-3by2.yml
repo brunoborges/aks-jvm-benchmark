@@ -20,17 +20,17 @@ spec:
         "kubernetes.io/os": linux
       containers:
       - name: sampleapp-3by2
-        image: devsummit2024.azurecr.io/sampleapp:latest
+        image: brborgesacrergo.azurecr.io/sampleapp:latest
         imagePullPolicy: Always
         env:
         - name: APPLICATIONINSIGHTS_CONNECTION_STRING
-          value: "InstrumentationKey=5ce2cefa-9a39-48d1-9285-9171aff833db;IngestionEndpoint=https://eastus-8.in.applicationinsights.azure.com/;LiveEndpoint=https://eastus.livediagnostics.monitor.azure.com/;ApplicationId=f677e22a-9701-4c50-b259-28a40824ab12"
+          value: "InstrumentationKey=cfc480ad-5736-4c89-a74e-fde57b58d333;IngestionEndpoint=https://eastus-8.in.applicationinsights.azure.com/;LiveEndpoint=https://eastus.livediagnostics.monitor.azure.com/;ApplicationId=7605eaea-ea1a-4db5-957d-7ea4c9df9efc"
         - name: APPLICATIONINSIGHTS_ROLE_NAME
           value: "3BY2"
         - name: APPLICATIONINSIGHTS_PREVIEW_PROFILER_ENABLED
           value: "true"
         - name: JAVA_TOOL_OPTIONS
-          value: "-XX:MaxRAMPercentage=70"
+          value: "-XX:MaxRAMPercentage=70 -XX:+UseParallelGC"
         - name: MY_POD_IP
           valueFrom:
             fieldRef:
@@ -41,15 +41,10 @@ spec:
         resources:
           requests:
             cpu: "2000m"
-            memory: "2Gi"
+            memory: "1Gi"
           limits:
             cpu: "2000m"
-            memory: "2Gi"
-        # readinessProbe:
-        #  httpGet:
-        #    path: /
-        #    port: 8080
-        #  timeoutSeconds: 30
+            memory: "1Gi"
 ---
 apiVersion: v1
 kind: Service

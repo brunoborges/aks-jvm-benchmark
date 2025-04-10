@@ -1,0 +1,29 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-config-redistribution
+data:
+  nginx.conf: |
+    events {}
+
+    http {
+      upstream backend {
+        # round robin by default across all internal load balancers. Uncomment least_conn below to enable least connections
+        # least_conn;
+        server internal-sampleapp-2by2.default.svc.cluster.local:8080;
+        server internal-sampleapp-2by3.default.svc.cluster.local:8080;
+        server internal-sampleapp-3by2.default.svc.cluster.local:8080;
+        server internal-sampleapp-6by1.default.svc.cluster.local:8080;
+      }
+
+      server {
+        listen 80;
+
+        location / {
+          proxy_pass http://backend;
+        }
+      }
+    }
+
+
+

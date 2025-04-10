@@ -21,7 +21,7 @@ spec:
       volumes:
       - name: config-volume
         configMap:
-          name: nginx-config
+          name: nginx-config-gcbench
 ---
 apiVersion: v1
 kind: Service
