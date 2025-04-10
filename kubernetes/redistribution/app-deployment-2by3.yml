@@ -24,7 +24,7 @@ spec:
         imagePullPolicy: Always
         env:
         - name: APPLICATIONINSIGHTS_CONNECTION_STRING
-          value: "InstrumentationKey=cfc480ad-5736-4c89-a74e-fde57b58d333;IngestionEndpoint=https://eastus-8.in.applicationinsights.azure.com/;LiveEndpoint=https://eastus.livediagnostics.monitor.azure.com/;ApplicationId=7605eaea-ea1a-4db5-957d-7ea4c9df9efc"
+          value: "InstrumentationKey=d064c70b-8345-42fd-a3e7-2393b99bca97;IngestionEndpoint=https://eastus-8.in.applicationinsights.azure.com/;LiveEndpoint=https://eastus.livediagnostics.monitor.azure.com/;ApplicationId=0499e9ac-d848-4752-840c-f361447b1561"
         - name: APPLICATIONINSIGHTS_ROLE_NAME
           value: "2BY3"
         - name: APPLICATIONINSIGHTS_PREVIEW_PROFILER_ENABLED

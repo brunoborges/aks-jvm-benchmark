@@ -1,7 +1,10 @@
-RESOURCE_GROUP=devsummit2024
-ACR_NAME=devsummit2024
-AKS_NAME=devsummit2024
-AKS_NODE_COUNT=1
-AKS_NODE_VM_SIZE=Standard_B2s
-AKS_NODE_DISK_SIZE=30
-AKS_SERVICE_PRINCIPAL_NAME=brborgesAksServicePrincipal
+#!/bin/sh
+export RESOURCE_GROUP=brborges-ergonomics-demo
+export ACR_NAME=brborgesacrergo
+export AKS_NAME=brborgesaksergodemo
+export AKS_NODE_COUNT=6
+export AKS_NODE_VM_SIZE=Standard_B2s
+export AKS_NODE_DISK_SIZE=30
+export AKS_SERVICE_PRINCIPAL_NAME=brborgesAksServicePrincipal
+
+az configure --defaults group=$RESOURCE_GROUP

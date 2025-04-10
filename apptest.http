@@ -12,7 +12,7 @@ GET {{server}}/json HTTP/1.1
 GET {{server}}/inspect HTTP/1.1
 
 ### Trigger /primeFactor
-GET {{server}}/primeFactor?number=99277332291281731 HTTP/1.1
+GET {{server}}/primeFactor?number=99271281731 HTTP/1.1
 
 ### Trigger /primeFactor WITH LOGGING
 GET http://localhost:{{port}}/primeFactor?number=927398173&logging=true HTTP/1.1
@@ -20,3 +20,5 @@ GET http://localhost:{{port}}/primeFactor?number=927398173&logging=true HTTP/1.1
 ### Trigger /waitWithPrimeFactor
 GET {{server}}/waitWithPrimeFactor?duration=500&number=927398173 HTTP/1.1
 
+### GET orders by Id
+GET {{server}}/orders/1 HTTP/1.1
