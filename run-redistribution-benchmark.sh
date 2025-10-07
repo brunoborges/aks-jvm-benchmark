@@ -55,6 +55,24 @@ wait_for_pods() {
         READY=$(kubectl get pods -l "version=$label" -o jsonpath='{.items[*].status.containerStatuses[*].ready}' | grep -o "true" | wc -l | tr -d ' ')
         if [ "$READY" -eq "$expected" ]; then
             echo -e " ${GREEN}✅ $READY/$expected ready${NC}"
+            break
+        fi
+        echo -n "."
+        sleep 5
+    done
+    
+    if [ "$READY" -ne "$expected" ]; then
+        echo -e " ${RED}❌ Timeout${NC}"
+        return 1
+    fi
+    
+    # Wait for service to be ready
+    echo -n "   Waiting for service to be ready..."
+    for i in {1..60}; do
+        # Check if service endpoints are available
+        ENDPOINTS=$(kubectl get endpoints "internal-sampleapp-$label" -o jsonpath='{.subsets[*].addresses[*].ip}' 2>/dev/null | wc -w | tr -d ' ')
+        if [ "$ENDPOINTS" -ge "1" ]; then
+            echo -e " ${GREEN}✅ Service ready${NC}"
             sleep 10  # Extra time for services to stabilize
             return 0
         fi
@@ -62,7 +80,7 @@ wait_for_pods() {
         sleep 5
     done
     
-    echo -e " ${RED}❌ Timeout${NC}"
+    echo -e " ${RED}❌ Service timeout${NC}"
     return 1
 }
 
@@ -147,8 +165,21 @@ for CONFIG in "${CONFIGS[@]}"; do
     echo ""
     echo "2. Running benchmarks for $CONFIG..."
     
-    # Service URL
-    SERVICE_URL="http://internal-sampleapp-$CONFIG.default.svc.cluster.local"
+    # Service URL (using port 8080 as defined in the service)
+    SERVICE_URL="http://internal-sampleapp-$CONFIG.default.svc.cluster.local:8080"
+    
+    # Verify service is accessible
+    echo "   Verifying service connectivity..."
+    if ! kubectl exec deployment/loadtest -- curl -s --connect-timeout 5 "$SERVICE_URL/" > /dev/null 2>&1; then
+        echo -e "   ${YELLOW}⚠️  Service may not be fully ready, waiting 30s more...${NC}"
+        sleep 30
+        if ! kubectl exec deployment/loadtest -- curl -s --connect-timeout 5 "$SERVICE_URL/" > /dev/null 2>&1; then
+            echo -e "   ${RED}❌ Service still not accessible, skipping $CONFIG${NC}"
+            kubectl delete -f "kubernetes/redistribution/app-deployment-$CONFIG.yml"
+            continue
+        fi
+    fi
+    echo -e "   ${GREEN}✅ Service is accessible${NC}"
     
     # Test 1: Simple JSON endpoint
     echo ""

@@ -1,7 +1,12 @@
 #!/bin/bash
 
 # Quick Test of Benchmark Automation
-# Tests a single configuration with short duration
+# Techo ""
+echo "6. Resource utilization:"
+kubectl top pods -l "version=$CONFIG"
+
+echo ""
+echo "7. Cleaning up..." single configuration with short duration
 
 set -e
 
@@ -31,14 +36,28 @@ echo "3. Checking pod status..."
 kubectl get pods -l "version=$CONFIG"
 
 echo ""
-echo "4. Running quick benchmark..."
+echo "4. Verifying service is accessible..."
+SERVICE_URL="http://internal-sampleapp-$CONFIG.default.svc.cluster.local:8080"
+
+# Wait for service to be ready
+for i in {1..12}; do
+    if kubectl exec deployment/loadtest -- curl -s --connect-timeout 5 "$SERVICE_URL/" > /dev/null 2>&1; then
+        echo "✅ Service is accessible"
+        break
+    fi
+    echo "Waiting for service... ($i/12)"
+    sleep 5
+done
+
+echo ""
+echo "5. Running quick benchmark..."
 kubectl exec deployment/loadtest -- wrk \
   -t10 -c50 -d$DURATION --timeout 5s -R3000 -L \
-  http://internal-sampleapp-$CONFIG.default.svc.cluster.local/json \
+  "$SERVICE_URL/json" \
   | tee "$RESULTS_DIR/${CONFIG}_test.txt"
 
 echo ""
-echo "5. Resource utilization:"
+echo "6. Resource utilization:"
 kubectl top pods -l "version=$CONFIG"
 
 echo ""

@@ -5,7 +5,7 @@ metadata:
 spec:
   strategy: 
     type: Recreate
-  replicas: 3
+  replicas: 2
   selector:
     matchLabels:
       app: sampleapp
@@ -41,10 +41,10 @@ spec:
         resources:
           requests:
             cpu: "3000m"
-            memory: "1536Mi"
+            memory: "3Gi"
           limits:
             cpu: "3000m"
-            memory: "1536Mi"
+            memory: "3Gi"
 ---
 apiVersion: v1
 kind: Service

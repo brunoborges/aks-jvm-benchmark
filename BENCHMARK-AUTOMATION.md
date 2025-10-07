@@ -165,6 +165,27 @@ kubectl describe pod <pod-name>
 kubectl logs <pod-name>
 ```
 
+**Service connection timeout:**
+```bash
+# Check service exists
+kubectl get service internal-sampleapp-6by1
+
+# Check endpoints are populated
+kubectl get endpoints internal-sampleapp-6by1
+
+# Test connectivity from load test pod
+kubectl exec deployment/loadtest -- curl -v http://internal-sampleapp-6by1.default.svc.cluster.local:8080/
+
+# Check DNS resolution
+kubectl exec deployment/loadtest -- nslookup internal-sampleapp-6by1.default.svc.cluster.local
+```
+
+**Script skips configuration:**
+- Check error messages - service may not be accessible
+- Verify no NetworkPolicies blocking traffic
+- Check cluster has sufficient resources
+- Review BENCHMARK-FIXES.md for detailed troubleshooting
+
 **Load test pod not found:**
 ```bash
 # Deploy load test pod
