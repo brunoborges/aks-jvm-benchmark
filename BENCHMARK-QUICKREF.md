@@ -192,13 +192,41 @@ benchmark-results/
 | Connection timeout | Wait longer, check endpoints |
 | Service not found | Check deployment applied |
 | Load test pod missing | Deploy loadtest pod |
-| Charts empty | Check Node.js installed |
+| Charts empty/errors | Regenerate .hdr files (see below) |
 | High latency | Check cluster resources |
+
+### Regenerate HdrHistogram Files
+
+If charts fail to generate, regenerate `.hdr` files:
+
+```bash
+RESULTS_DIR="benchmark-results/<your-timestamp>"
+
+for txt_file in "$RESULTS_DIR"/*.txt; do
+    base_name=$(basename "$txt_file" .txt)
+    hdr_file="$RESULTS_DIR/${base_name}.hdr"
+    
+    echo "#[StartTime: 0 (seconds), $(date +%s)]" > "$hdr_file"
+    echo "#[BaseTime: 0.0 (seconds)]" >> "$hdr_file"
+    echo "Value,Percentile,TotalCount,1/(1-Percentile)" >> "$hdr_file"
+    
+    awk '/Detailed Percentile spectrum:/,/#\[Mean/{
+        if ($1 ~ /^[0-9]+\.[0-9]+$/ && NF == 4) {
+            printf "%s,%s,%s,%s\n", $1, $2, $3, $4
+        }
+    }' "$txt_file" >> "$hdr_file"
+done
+
+# Then regenerate charts
+./generate-charts.sh "$RESULTS_DIR"
+```
 
 ## Documentation
 
 - **BENCHMARK-AUTOMATION.md** - Full guide
 - **BENCHMARK-FIXES.md** - Troubleshooting fixes
+- **BUGFIX-2BY3.md** - 2by3 replica count fix
+- **BUGFIX-HDRHISTOGRAM.md** - Chart generation fix
 - **DEMO-FLOW.md** - Manual demo script
 - **chart-generator/README.md** - Chart generation
 

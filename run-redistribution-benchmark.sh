@@ -12,7 +12,7 @@ THREADS=10
 CONNECTIONS=50
 WARMUP_DURATION="30s"
 BENCH_DURATION="3m"
-RATE=3000
+RATE=8000
 TIMEOUT="5s"
 
 # Endpoints to test
@@ -29,6 +29,10 @@ NC='\033[0m' # No Color
 # Configurations to test
 CONFIGS=("6by1" "3by2" "2by3" "2by2")
 
+# Test types to run
+# TEST_TYPES=("simple" "cpu")
+TEST_TYPES=("simple")
+
 echo "======================================"
 echo "Redistribution Benchmark Suite"
 echo "======================================"
@@ -40,6 +44,7 @@ echo "   - Warmup: $WARMUP_DURATION"
 echo "   - Duration: $BENCH_DURATION"
 echo "   - Rate limit: $RATE req/s"
 echo "   - Results directory: $RESULTS_DIR"
+echo "   - Test types: Simple JSON, CPU-Intensive"
 echo ""
 
 # Create results directory
@@ -126,88 +131,112 @@ extract_hdr_data() {
     local input_file=$1
     local output_file=$2
     
-    # Extract the latency distribution section
-    awk '/Detailed Percentile spectrum:/,/Mean/{if ($1 ~ /^[0-9]/) print}' "$input_file" > "$output_file" 2>/dev/null || true
+    # Create HdrHistogram header (CSV format expected by HdrHistogram plotter)
+    echo "#[StartTime: 0 (seconds), $(date +%s)]" > "$output_file"
+    echo "#[BaseTime: 0.0 (seconds)]" >> "$output_file"
+    echo "Value,Percentile,TotalCount,1/(1-Percentile)" >> "$output_file"
     
-    # If no detailed data, create from summary
-    if [ ! -s "$output_file" ]; then
-        echo "# Extracted from summary statistics" > "$output_file"
-        grep "Latency" "$input_file" | head -1 >> "$output_file"
+    # Extract the latency distribution section from wrk -L output
+    # wrk outputs: Value Percentile TotalCount 1/(1-Percentile)
+    # Values are already in milliseconds
+    awk '/Detailed Percentile spectrum:/,/#\[Mean/{
+        if ($1 ~ /^[0-9]+\.[0-9]+$/ && NF == 4) {
+            printf "%s,%s,%s,%s\n", $1, $2, $3, $4
+        }
+    }' "$input_file" >> "$output_file" 2>/dev/null || true
+    
+    # Check if we got data
+    if [ $(wc -l < "$output_file") -le 3 ]; then
+        echo "# No detailed histogram data available" > "$output_file"
+        return 1
     fi
+    
+    return 0
 }
 
-# Main benchmark loop
-for CONFIG in "${CONFIGS[@]}"; do
+# Main benchmark loop - iterate by test type, then by configuration
+for TEST_TYPE in "${TEST_TYPES[@]}"; do
     echo ""
     echo "======================================"
-    echo -e "${BLUE}Testing Configuration: $CONFIG${NC}"
+    TEST_TYPE_UPPER=$(echo "$TEST_TYPE" | tr '[:lower:]' '[:upper:]')
+    echo -e "${YELLOW}🎯 TEST TYPE: ${TEST_TYPE_UPPER}${NC}"
     echo "======================================"
-    echo ""
     
-    # Determine pod count based on config
-    case $CONFIG in
-        "6by1") POD_COUNT=6 ;;
-        "3by2") POD_COUNT=3 ;;
-        "2by3") POD_COUNT=2 ;;
-        "2by2") POD_COUNT=2 ;;
-    esac
-    
-    # Deploy the configuration
-    echo "1. Deploying $CONFIG configuration..."
-    kubectl apply -f "kubernetes/redistribution/app-deployment-$CONFIG.yml"
-    
-    # Wait for pods to be ready
-    if ! wait_for_pods "$CONFIG" "$POD_COUNT"; then
-        echo -e "${RED}❌ Failed to deploy $CONFIG, skipping...${NC}"
-        continue
+    # Set endpoint based on test type
+    if [ "$TEST_TYPE" = "simple" ]; then
+        ENDPOINT="$ENDPOINT_SIMPLE"
+        echo "   Endpoint: /json (Simple JSON response)"
+    else
+        ENDPOINT="$ENDPOINT_CPU"
+        echo "   Endpoint: /waitWithPrimeFactor (CPU-Intensive)"
     fi
-    
     echo ""
-    echo "2. Running benchmarks for $CONFIG..."
     
-    # Service URL (using port 8080 as defined in the service)
-    SERVICE_URL="http://internal-sampleapp-$CONFIG.default.svc.cluster.local:8080"
-    
-    # Verify service is accessible
-    echo "   Verifying service connectivity..."
-    if ! kubectl exec deployment/loadtest -- curl -s --connect-timeout 5 "$SERVICE_URL/" > /dev/null 2>&1; then
-        echo -e "   ${YELLOW}⚠️  Service may not be fully ready, waiting 30s more...${NC}"
-        sleep 30
-        if ! kubectl exec deployment/loadtest -- curl -s --connect-timeout 5 "$SERVICE_URL/" > /dev/null 2>&1; then
-            echo -e "   ${RED}❌ Service still not accessible, skipping $CONFIG${NC}"
-            kubectl delete -f "kubernetes/redistribution/app-deployment-$CONFIG.yml"
+    for CONFIG in "${CONFIGS[@]}"; do
+        echo ""
+        echo "======================================"
+        echo -e "${BLUE}Testing Configuration: $CONFIG${NC}"
+        echo "======================================"
+        echo ""
+        
+        # Determine pod count based on config
+        case $CONFIG in
+            "6by1") POD_COUNT=6 ;;
+            "3by2") POD_COUNT=3 ;;
+            "2by3") POD_COUNT=2 ;;
+            "2by2") POD_COUNT=2 ;;
+        esac
+        
+        # Deploy the configuration
+        echo "1. Deploying $CONFIG configuration..."
+        kubectl apply -f "kubernetes/redistribution/app-deployment-$CONFIG.yml"
+        
+        # Wait for pods to be ready
+        if ! wait_for_pods "$CONFIG" "$POD_COUNT"; then
+            echo -e "${RED}❌ Failed to deploy $CONFIG, skipping...${NC}"
             continue
         fi
-    fi
-    echo -e "   ${GREEN}✅ Service is accessible${NC}"
-    
-    # Test 1: Simple JSON endpoint
-    echo ""
-    echo "   Test 1: Simple JSON endpoint"
-    run_warmup "$SERVICE_URL$ENDPOINT_SIMPLE"
-    run_benchmark "$CONFIG" "simple" "$SERVICE_URL$ENDPOINT_SIMPLE" "$RESULTS_DIR/${CONFIG}_simple.txt"
-    extract_hdr_data "$RESULTS_DIR/${CONFIG}_simple.txt" "$RESULTS_DIR/${CONFIG}_simple.hdr"
-    
-    # Test 2: CPU-intensive endpoint
-    echo ""
-    echo "   Test 2: CPU-intensive endpoint (Prime Factorization)"
-    run_warmup "$SERVICE_URL$ENDPOINT_CPU"
-    run_benchmark "$CONFIG" "cpu" "$SERVICE_URL$ENDPOINT_CPU" "$RESULTS_DIR/${CONFIG}_cpu.txt"
-    extract_hdr_data "$RESULTS_DIR/${CONFIG}_cpu.txt" "$RESULTS_DIR/${CONFIG}_cpu.hdr"
-    
-    # Check resource utilization
-    echo ""
-    echo "3. Resource utilization for $CONFIG:"
-    kubectl top pods -l "version=$CONFIG" | tee "$RESULTS_DIR/${CONFIG}_resources.txt"
-    
-    echo ""
-    echo -e "${GREEN}✅ Completed benchmarks for $CONFIG${NC}"
-    echo ""
-    
-    # Clean up this deployment before next one
-    echo "4. Cleaning up $CONFIG deployment..."
-    kubectl delete -f "kubernetes/redistribution/app-deployment-$CONFIG.yml"
-    sleep 10
+        
+        echo ""
+        echo "2. Running $TEST_TYPE benchmark for $CONFIG..."
+        
+        # Service URL (using port 8080 as defined in the service)
+        SERVICE_URL="http://internal-sampleapp-$CONFIG.default.svc.cluster.local:8080"
+        
+        # Verify service is accessible
+        echo "   Verifying service connectivity..."
+        if ! kubectl exec deployment/loadtest -- curl -s --connect-timeout 5 "$SERVICE_URL/" > /dev/null 2>&1; then
+            echo -e "   ${YELLOW}⚠️  Service may not be fully ready, waiting 30s more...${NC}"
+            sleep 30
+            if ! kubectl exec deployment/loadtest -- curl -s --connect-timeout 5 "$SERVICE_URL/" > /dev/null 2>&1; then
+                echo -e "   ${RED}❌ Service still not accessible, skipping $CONFIG${NC}"
+                kubectl delete -f "kubernetes/redistribution/app-deployment-$CONFIG.yml"
+                continue
+            fi
+        fi
+        echo -e "   ${GREEN}✅ Service is accessible${NC}"
+        
+        # Run the benchmark for this test type
+        echo ""
+        echo "   Running $TEST_TYPE test..."
+        run_warmup "$SERVICE_URL$ENDPOINT"
+        run_benchmark "$CONFIG" "$TEST_TYPE" "$SERVICE_URL$ENDPOINT" "$RESULTS_DIR/${CONFIG}_${TEST_TYPE}.txt"
+        extract_hdr_data "$RESULTS_DIR/${CONFIG}_${TEST_TYPE}.txt" "$RESULTS_DIR/${CONFIG}_${TEST_TYPE}.hdr"
+        
+        # Check resource utilization
+        echo ""
+        echo "3. Resource utilization for $CONFIG ($TEST_TYPE):"
+        kubectl top pods -l "version=$CONFIG" | tee "$RESULTS_DIR/${CONFIG}_${TEST_TYPE}_resources.txt"
+        
+        echo ""
+        echo -e "${GREEN}✅ Completed $TEST_TYPE benchmark for $CONFIG${NC}"
+        echo ""
+        
+        # Clean up this deployment before next one
+        echo "4. Cleaning up $CONFIG deployment..."
+        kubectl delete -f "kubernetes/redistribution/app-deployment-$CONFIG.yml"
+        sleep 10
+    done
 done
 
 echo ""
@@ -218,20 +247,20 @@ echo ""
 echo "📁 Results saved to: $RESULTS_DIR"
 echo ""
 echo "📊 Summary:"
-for CONFIG in "${CONFIGS[@]}"; do
-    if [ -f "$RESULTS_DIR/${CONFIG}_simple.txt" ]; then
-        echo ""
-        echo "  $CONFIG - Simple endpoint:"
-        grep "Requests/sec:" "$RESULTS_DIR/${CONFIG}_simple.txt" || true
-        grep "Latency.*99%" "$RESULTS_DIR/${CONFIG}_simple.txt" | head -1 || true
-        
-        echo "  $CONFIG - CPU-intensive:"
-        grep "Requests/sec:" "$RESULTS_DIR/${CONFIG}_cpu.txt" || true
-        grep "Latency.*99%" "$RESULTS_DIR/${CONFIG}_cpu.txt" | head -1 || true
-    fi
+echo ""
+for TEST_TYPE in "${TEST_TYPES[@]}"; do
+    TEST_TYPE_UPPER=$(echo "$TEST_TYPE" | tr '[:lower:]' '[:upper:]')
+    echo "  ${TEST_TYPE_UPPER} ENDPOINT:"
+    for CONFIG in "${CONFIGS[@]}"; do
+        if [ -f "$RESULTS_DIR/${CONFIG}_${TEST_TYPE}.txt" ]; then
+            echo "    $CONFIG:"
+            grep "Requests/sec:" "$RESULTS_DIR/${CONFIG}_${TEST_TYPE}.txt" | sed 's/^/      /' || true
+            grep "Latency.*99%" "$RESULTS_DIR/${CONFIG}_${TEST_TYPE}.txt" | head -1 | sed 's/^/      /' || true
+        fi
+    done
+    echo ""
 done
 
-echo ""
 echo "🎨 Next step: Generate HdrHistogram charts"
 echo "   Run: ./generate-charts.sh $RESULTS_DIR"
 echo ""
