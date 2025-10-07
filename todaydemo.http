@@ -1,0 +1,25 @@
+### JVM Inspect
+GET http://localhost:8080/inspect
+
+
+
+### Number 1
+GET http://localhost:8080/primeFactor?number=321786217836713371911
+
+{
+  "number" : 321786217836713371911,
+  "factors" : "3 * 13 * 3061 * 2695501033152509",
+  "timeInSeconds" : 1.211
+}
+
+### Number 2
+GET http://localhost:8080/primeFactor?number=3217862178367133719117
+
+{
+  "number" : 3217862178367133719117,
+  "factors" : "29 * 76441 * 1451587037993753",
+  "timeInSeconds" : 0.93
+}
+
+### Generate numbers who sit in memory
+GET http://localhost:8080/generateRandomNumbers?amount=100000&bound=100000&retentionMs=5000

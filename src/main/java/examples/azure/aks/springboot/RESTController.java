@@ -15,6 +15,7 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -122,14 +123,69 @@ public class RESTController {
         return ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE);
     }
 
+    // Cache to hold onto lists after endpoint returns
+    private static final List<MemoryReference> MEMORY_CACHE = new ArrayList<>();
+    
+    // Class to hold references and handle delayed cleanup
+    private static class MemoryReference {
+        private final Object data;
+        private final long creationTime;
+        private final long retentionTimeMs;
+        
+        public MemoryReference(Object data, long retentionTimeMs) {
+            this.data = data;
+            this.creationTime = System.currentTimeMillis();
+            this.retentionTimeMs = retentionTimeMs;
+        }
+        
+        public boolean shouldCleanup() {
+            return System.currentTimeMillis() - creationTime > retentionTimeMs;
+        }
+    }
+    
+    // Background thread to periodically clean up expired references
+    private static final Thread CLEANUP_THREAD = new Thread(() -> {
+        while (true) {
+            try {
+                Thread.sleep(5000); // Check every 5 seconds
+                
+                synchronized (MEMORY_CACHE) {
+                    MEMORY_CACHE.removeIf(MemoryReference::shouldCleanup);
+                    // Log cache size for monitoring
+                    if (!MEMORY_CACHE.isEmpty()) {
+                        System.out.println("Memory cache size: " + MEMORY_CACHE.size());
+                    }
+                }
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                break;
+            } catch (Exception e) {
+                System.err.println("Error in cleanup thread: " + e.getMessage());
+            }
+        }
+    }, "MemoryCacheCleanupThread");
+    
+    static {
+        CLEANUP_THREAD.setDaemon(true);
+        CLEANUP_THREAD.start();
+    }
+
     @GetMapping("/generateRandomNumbers")
     @ResponseBody
-    List<Integer> generateRandomNumbers(int amount, int bound) {
+    List<BigInteger> generateRandomNumbers(BigInteger amount, BigInteger bound, @RequestParam(required = false, defaultValue = "0") long retentionMs) {
         var random = ThreadLocalRandom.current();
-        var numbers = new ArrayList<Integer>(amount);
-        for (int i = 0; i < amount; i++) {
-            numbers.add(random.nextInt(bound));
+        var numbers = new ArrayList<BigInteger>();
+        for (long i = 0; i < amount.longValue(); i++) {
+            numbers.add(BigInteger.valueOf(random.nextLong(bound.longValue())));
         }
+        
+        // If retention time is specified, keep the list in memory
+        if (retentionMs > 0) {
+            synchronized (MEMORY_CACHE) {
+                MEMORY_CACHE.add(new MemoryReference(numbers, retentionMs));
+            }
+        }
+        
         return numbers;
     }
 }
