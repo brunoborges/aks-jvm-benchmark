@@ -6,14 +6,14 @@ source config
 az acr build --registry $ACR_NAME --image sampleapp:latest -f Dockerfile.sampleapp ../
 
 # Build the load tester
-az acr build --registry $ACR_NAME --image loadtester:latest -f Dockerfile.loadtester ../
+az acr build --registry $ACR_NAME --image loadtest:latest -f Dockerfile.loadtest ../
 
 
 # Deploy sampleapp container to AKS
 kubectl apply -f sampleapp.yaml
 
 # Deploy loadtester container to AKS
-kubectl apply -f loadtester.yaml
+kubectl apply -f loadtest.yaml
 
 # Deploy ingress controller to AKS
 kubectl apply -f ingress.yaml

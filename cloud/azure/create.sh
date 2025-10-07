@@ -13,9 +13,3 @@ az aks create --resource-group $RESOURCE_GROUP --name $AKS_NAME --node-count $AK
 
 # Get the id of the service principal configured for AKS
 CLIENT_ID=$(az aks show --resource-group $RESOURCE_GROUP --name $AKS_NAME --query "servicePrincipalProfile.clientId" --output tsv)
-
-# Build the sample app
-# az acr build --registry $ACR_NAME --image sampleapp:latest -f ../../containers/Dockerfile.sampleapp ../
-
-# Build the load tester
-# az acr build --registry $ACR_NAME --image loadtester:latest -f ../../containers/Dockerfile.loadtester ../
