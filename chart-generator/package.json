@@ -1,0 +1,16 @@
+{
+  "name": "benchmark-chart-generator",
+  "version": "1.0.0",
+  "description": "Generate HdrHistogram charts from benchmark data using Playwright",
+  "type": "module",
+  "scripts": {
+    "generate": "node generate-charts.js",
+    "test": "node generate-charts.js"
+  },
+  "dependencies": {
+    "playwright": "^1.40.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.40.0"
+  }
+}

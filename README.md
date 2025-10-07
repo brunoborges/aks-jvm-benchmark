@@ -42,6 +42,37 @@ This project is used as an exercise for evaluating different deployment styles (
 
 - **[DEMO-FLOW.md](DEMO-FLOW.md)**: Complete conference demo script with step-by-step instructions
 - **[AZURE-POLICY.md](AZURE-POLICY.md)**: Azure Policy compliance guide and troubleshooting
+- **[BENCHMARK-AUTOMATION.md](BENCHMARK-AUTOMATION.md)**: Automated benchmarking and chart generation
+
+## 🧪 Running Benchmarks
+
+### Automated Benchmark Suite
+
+Run benchmarks against all four redistribution scenarios and generate visualization charts:
+
+```bash
+# Run the full benchmark suite (60-80 minutes)
+./run-redistribution-benchmark.sh
+
+# Generate HdrHistogram comparison charts
+./generate-charts.sh benchmark-results/20250107-143022
+```
+
+See [BENCHMARK-AUTOMATION.md](BENCHMARK-AUTOMATION.md) for detailed documentation.
+
+### Manual Benchmark
+
+For testing a specific configuration:
+
+```bash
+# Deploy configuration
+kubectl apply -f kubernetes/redistribution/app-deployment-6by1.yml
+
+# Run benchmark from load test pod
+kubectl exec -it deployment/loadtest -- wrk \
+  -t10 -c50 -d3m --timeout 5s -R3000 -L \
+  http://internal-sampleapp-6by1.default.svc.cluster.local/json
+```
 
 
 ## Generate HdrHistogram chart

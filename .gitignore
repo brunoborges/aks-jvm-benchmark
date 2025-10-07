@@ -18,5 +18,19 @@ small-image-test/Dockerfile.vanilla
 small-image-test/Hello.class
 small-image-test/Hello.java
 small-image-test/myapp.jar
+
+# Benchmark results
+benchmark-results/
+
+# Node modules
+chart-generator/node_modules/
+chart-generator/package-lock.json
+
+# Playwright
+chart-generator/.playwright/
+
+# Temporary files
+*.hgrm
+*.tmp
 test-ergonomics/Hello.class
 applicationinsights.log
