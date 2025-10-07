@@ -18,7 +18,7 @@ spec:
         "kubernetes.io/os": linux
       containers:
       - name: sampleapp-ergonomics
-        image: brborgesacrergo.azurecr.io/sampleapp:latest
+        image: techxchange2025acr.azurecr.io/sampleapp:latest
         imagePullPolicy: Always
         env:
         - name: APPLICATIONINSIGHTS_CONNECTION_STRING

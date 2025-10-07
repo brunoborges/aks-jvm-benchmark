@@ -1,4 +1,4 @@
 #!/bin/sh
-source AZ_CONFIG
+source cloud/azure/config
 
-az aks get-credentials -n devsummit2024 --admin
+az aks get-credentials -n $AKS_NAME --admin

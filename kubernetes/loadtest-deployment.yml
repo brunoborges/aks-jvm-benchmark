@@ -18,16 +18,16 @@ spec:
         "kubernetes.io/os": linux
       containers:
       - name: loadtest
-        image: brborgesacrergo.azurecr.io/loadtest:latest
+        image: techxchange2025acr.azurecr.io/loadtest:latest
         ports:
         - containerPort: 8080
           name: http
         resources:
           requests:
-            cpu: "6000m"
-            memory: "8Gi"
+            cpu: "4000m"
+            memory: "4Gi"
           limits:
-            cpu: "8000m"
-            memory: "8Gi"
+            cpu: "4000m"
+            memory: "4Gi"
         command: [ "/bin/bash", "-c", "--" ]
         args: [ "while true; do sleep 30; done;" ]

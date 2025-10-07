@@ -18,7 +18,7 @@ spec:
         "kubernetes.io/os": linux
       containers:
       - name: sampleapp-pgc
-        image: brborgesacrergo.azurecr.io/sampleapp:latest
+        image: techxchange2025acr.azurecr.io/sampleapp:latest
         imagePullPolicy: Always
         env:
         - name: APPLICATIONINSIGHTS_CONNECTION_STRING
@@ -27,7 +27,7 @@ spec:
           value: "ParallelGC"
         - name: APPLICATIONINSIGHTS_PREVIEW_PROFILER_ENABLED
           value: "true"
-        - name: JAVA_TOOL_OPTIONS
+        - name: JDK_JAVA_OPTIONS
           value: "-XX:+UseParallelGC -XX:MaxRAMPercentage=70"
         - name: MY_POD_IP
           valueFrom:

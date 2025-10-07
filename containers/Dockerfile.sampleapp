@@ -1,4 +1,3 @@
-#############
 # Build layer
 FROM mcr.microsoft.com/openjdk/jdk:21-ubuntu AS maven_build
 
@@ -17,7 +16,4 @@ FROM mcr.microsoft.com/openjdk/jdk:21-ubuntu
 
     COPY --from=maven_build /tmp/target/*.jar /example.jar
 
-    ADD containers/start.sh /usr/bin/start.sh
-    RUN chmod +x /usr/bin/start.sh
-
-    ENTRYPOINT ["/usr/bin/start.sh"]
+    CMD ["java", "-jar", "/example.jar"]
