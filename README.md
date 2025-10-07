@@ -4,6 +4,45 @@
 
 This project is used as an exercise for evaluating different deployment styles (horizontal scaling versus vertical scaling) of JVM workloads on Kubernetes.
 
+## 🚀 Quick Start
+
+### Prerequisites
+- Azure subscription with AKS cluster
+- Azure Container Registry (ACR)
+- `kubectl` configured for your cluster
+- Azure CLI installed
+
+### Setup
+
+1. **Configure your ACR** in `cloud/azure/config`:
+   ```bash
+   ACR_NAME=your-acr-name
+   ```
+
+2. **Import external images** (for Azure Policy compliance):
+   ```bash
+   cd cloud/azure
+   ./import-images.sh
+   ```
+
+3. **Build and push application images**:
+   ```bash
+   cd cloud/azure
+   ./build-and-push.sh
+   ```
+
+4. **Deploy to AKS** - See [DEMO-FLOW.md](DEMO-FLOW.md) for detailed instructions
+
+### Important Notes
+- This project is configured for AKS clusters with Azure Policy restrictions
+- All images use ACR to comply with container registry policies
+- See [AZURE-POLICY.md](AZURE-POLICY.md) for detailed policy compliance information
+
+## 📖 Documentation
+
+- **[DEMO-FLOW.md](DEMO-FLOW.md)**: Complete conference demo script with step-by-step instructions
+- **[AZURE-POLICY.md](AZURE-POLICY.md)**: Azure Policy compliance guide and troubleshooting
+
 
 ## Generate HdrHistogram chart
 See: http://hdrhistogram.github.io/HdrHistogram/plotFiles.html
