@@ -1,10 +1,10 @@
 #!/bin/sh
-export RESOURCE_GROUP=brborges-ergonomics-demo
-export ACR_NAME=brborgesacrergo
-export AKS_NAME=brborgesaksergodemo
-export AKS_NODE_COUNT=6
+export RESOURCE_GROUP=brborges-techxchange2025
+export ACR_NAME=techxchange2025acr
+export AKS_NAME=techxchange2025aks
+export AKS_NODE_COUNT=8
 export AKS_NODE_VM_SIZE=Standard_B2s
 export AKS_NODE_DISK_SIZE=30
-export AKS_SERVICE_PRINCIPAL_NAME=brborgesAksServicePrincipal
+export AKS_SERVICE_PRINCIPAL_NAME=techxchange2025Principal
 
 az configure --defaults group=$RESOURCE_GROUP
