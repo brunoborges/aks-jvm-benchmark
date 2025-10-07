@@ -50,6 +50,14 @@ echo ""
 # Create results directory
 mkdir -p "$RESULTS_DIR"
 
+# Deploy ConfigMap for Application Insights (once for all deployments)
+echo "======================================"
+echo -e "${BLUE}Deploying Application Insights ConfigMap${NC}"
+echo "======================================"
+kubectl apply -f kubernetes/redistribution/app-insights-config.yml
+echo -e "${GREEN}✅ ConfigMap deployed${NC}"
+echo ""
+
 # Function to wait for pods to be ready
 wait_for_pods() {
     local label=$1

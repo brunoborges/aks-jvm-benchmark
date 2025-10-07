@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-insights-config
+  namespace: default
+data:
+  connection-string: "InstrumentationKey=b0e343e0-0c9d-43c9-a06a-c3b7b51ab005;IngestionEndpoint=https://eastus2-3.in.applicationinsights.azure.com/;LiveEndpoint=https://eastus2.livediagnostics.monitor.azure.com/;ApplicationId=114132a1-8bd2-4ed9-bbd2-122f9a0095e3"
