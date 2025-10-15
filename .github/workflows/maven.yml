@@ -15,13 +15,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v5
     - name: Get required JDK version from Maven project
       run: |
         JDK_VERSION=$(mvn help:evaluate -Dexpression=maven.compiler.release -q -DforceStdout)
         echo "JDK_VERSION=$JDK_VERSION" >> $GITHUB_ENV
     - name: Set up JDK
-      uses: actions/setup-java@v2
+      uses: actions/setup-java@v5
       with:
         java-version: ${{ env.JDK_VERSION }}
         distribution: microsoft
