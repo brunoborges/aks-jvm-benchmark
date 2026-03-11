@@ -95,10 +95,22 @@ kubectl get pods -l 'app=sampleapp,version in (ergonomics,g1gc,pgc)' -w
 kubectl get pods -l 'app=sampleapp,version in (ergonomics,g1gc,pgc)'
 ```
 
-### Step 1.3: Inspect Each Deployment (from Load Test Pod)
+### Step 1.3: Deploy Load Test Pod
 
 ```bash
-# Run this after Step 1.4 (loadtest deployment)
+# Deploy the load tester
+kubectl apply -f ../loadtest-deployment.yml
+
+# Wait until the pod is ready
+kubectl rollout status deployment/loadtest --timeout=180s
+
+# Confirm the running pod
+kubectl get pods -l app=loadtest -o wide
+```
+
+### Step 1.4: Inspect Each Deployment (from Load Test Pod)
+
+```bash
 # Query each service from the loadtest pod (curl is available there)
 kubectl exec -it deployment/loadtest -- curl -s http://internal-sampleapp-ergonomics.default.svc.cluster.local:8080/inspect
 kubectl exec -it deployment/loadtest -- curl -s http://internal-sampleapp-g1gc.default.svc.cluster.local:8080/inspect
@@ -110,26 +122,21 @@ kubectl exec -it deployment/loadtest -- curl -s http://internal-sampleapp-pgc.de
 - Show available processors and memory settings
 - Highlight that all three have identical resource limits
 
-### Step 1.4: Deploy Load Test Pod
-
-```bash
-# Deploy the load tester
-kubectl apply -f ../loadtest-deployment.yml
-
-# Get the load test pod name
-kubectl get pods | grep loadtest
-
-# Now run Step 1.3 inspect commands
-```
-
 ### Step 1.5: Run Benchmark - Simple JSON Endpoint
 
 ```bash
+# Deploy Nginx for Part 1 aggregate routing (all three GC variants)
+cd ../two-tier-lb
+kubectl apply -f nginx-config-gcbench.yml
+kubectl apply -f nginx-deployment-gcbench.yml
+kubectl rollout status deployment/nginx --timeout=180s
+cd ../deployments
+
 # Get into the load test pod
 kubectl exec -it deployment/loadtest -- /bin/bash
 
 # Inside the pod, run the benchmark against all three
-wrk -t10 -c50 -d2m -R3000 -L http://internal-sampleapp-all.default.svc.cluster.local/json
+wrk -t10 -c50 -d2m -R3000 -L http://internal-nginx.default.svc.cluster.local/json
 
 # Exit the pod
 exit
@@ -148,7 +155,7 @@ exit
 kubectl exec -it deployment/loadtest -- /bin/bash
 
 # Run CPU-intensive benchmark (prime factorization + network wait)
-wrk -t10 -c50 -d2m -R3000 -L http://internal-sampleapp-all.default.svc.cluster.local/waitWithPrimeFactor?duration=50\&number=927398173993974
+wrk -t10 -c50 -d2m -R3000 -L http://internal-nginx.default.svc.cluster.local/waitWithPrimeFactor?duration=50\&number=927398173993974
 
 # Exit the pod
 exit
@@ -216,6 +223,9 @@ cat app-deployment-2by2.yml | grep -A 10 resources
 ### Step 2.3: Deploy All Redistribution Configurations
 
 ```bash
+# Ensure redistribution config exists (required by sampleapp-*by* deployments)
+kubectl apply -f app-insights-config.yml
+
 ./deploy-all.sh
 
 # Wait for each rollout (avoids confusion from old pods being terminated)
@@ -386,7 +396,7 @@ kubectl get endpoints
 # Test from within cluster
 kubectl run debug --rm -it --image=alpine -- sh
 apk add curl
-curl http://internal-sampleapp-all.default.svc.cluster.local/
+curl http://internal-sampleapp-ergonomics.default.svc.cluster.local:8080/inspect
 ```
 
 ### Benchmark Pod Issues
