@@ -12,7 +12,7 @@ Many enterprise AKS clusters use Azure Policy to enforce security best practices
 ## Container Registry Strategy
 
 All deployment manifests in this project use images from:
-1. **Your Azure Container Registry (ACR)**: `techxchange2025acr.azurecr.io`
+1. **Your Azure Container Registry (ACR)**: `javaland.azurecr.io`
    - Application images: `sampleapp:latest`, `loadtest:latest`
    - Third-party images: `nginx:1.29.1`
 

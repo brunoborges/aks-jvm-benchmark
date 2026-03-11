@@ -33,7 +33,7 @@
 kubectl get nodes
 
 # Check if images are available in ACR
-az acr repository list --name techxchange2025acr --output table
+az acr repository list --name javaland --output table
 
 # Should show: nginx, sampleapp, loadtest
 

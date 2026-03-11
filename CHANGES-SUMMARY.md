@@ -13,7 +13,7 @@ All Kubernetes deployment manifests now use Azure Container Registry (ACR) inste
 - **Files Changed**:
   - `kubernetes/two-tier-lb/nginx-deployment-redistribution.yml`
   - `kubernetes/two-tier-lb/nginx-deployment-gcbench.yml`
-- **Change**: `nginx:1.27.0` → `techxchange2025acr.azurecr.io/nginx:1.29.1`
+- **Change**: `nginx:1.27.0` → `javaland.azurecr.io/nginx:1.29.1`
 - **Added**: Resource limits (250m-500m CPU, 128-256Mi RAM)
 
 #### Application Deployments
@@ -150,7 +150,7 @@ kubectl get pods -o jsonpath='{range .items[*]}{.spec.containers[*].image}{"\n"}
 ```
 
 Expected output - all images should be from:
-- `techxchange2025acr.azurecr.io/*`
+- `javaland.azurecr.io/*`
 - `mcr.microsoft.com/*`
 
 ### Test Deployment

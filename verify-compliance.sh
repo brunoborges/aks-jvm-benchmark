@@ -40,7 +40,7 @@ echo ""
 # Check all YAML files for non-ACR/MCR images
 echo "   Checking image sources..."
 NON_COMPLIANT=$(grep -r "image:" kubernetes/ --include="*.yml" | \
-    grep -v "techxchange2025acr.azurecr.io" | \
+    grep -v "javaland.azurecr.io" | \
     grep -v "mcr.microsoft.com" | \
     grep -v "#" || true)
 
@@ -101,7 +101,7 @@ else
     POD_IMAGES=$(kubectl get pods -o jsonpath='{range .items[*]}{.spec.containers[*].image}{"\n"}{end}' 2>/dev/null | sort -u)
     
     while IFS= read -r IMAGE; do
-        if [[ "$IMAGE" == *"techxchange2025acr.azurecr.io"* ]] || [[ "$IMAGE" == *"mcr.microsoft.com"* ]]; then
+        if [[ "$IMAGE" == *"javaland.azurecr.io"* ]] || [[ "$IMAGE" == *"mcr.microsoft.com"* ]]; then
             echo -e "   ${GREEN}✅ $IMAGE${NC}"
         elif [ -z "$IMAGE" ]; then
             continue

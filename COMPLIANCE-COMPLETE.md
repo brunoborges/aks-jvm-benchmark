@@ -7,7 +7,7 @@ Your project is now fully compliant with Azure Policy restrictions! All future d
 ## What Was Fixed
 
 ### 🔧 Container Images
-- ✅ **Nginx deployments** now use `techxchange2025acr.azurecr.io/nginx:1.29.1`
+- ✅ **Nginx deployments** now use `javaland.azurecr.io/nginx:1.29.1`
 - ✅ **All application images** already used your ACR
 - ✅ **Debug tools** use Microsoft Container Registry (mcr.microsoft.com)
 
