@@ -16,4 +16,4 @@ FROM mcr.microsoft.com/openjdk/jdk:25-ubuntu
 
     COPY --from=maven_build /tmp/target/*.jar /example.jar
 
-    CMD ["java", "-jar", "/example.jar"]
+    CMD ["jaz", "-jar", "/example.jar"]

@@ -1,7 +1,7 @@
 #!/bin/sh
-export RESOURCE_GROUP=brborges-techxchange2025
-export ACR_NAME=techxchange2025acr
-export AKS_NAME=ibm2025
+export RESOURCE_GROUP=rg-brunoborges-default
+export ACR_NAME=javaland
+export AKS_NAME=javaland
 export AKS_NODE_COUNT=8
 export AKS_NODE_VM_SIZE=Standard_B2s
 export AKS_NODE_DISK_SIZE=30
