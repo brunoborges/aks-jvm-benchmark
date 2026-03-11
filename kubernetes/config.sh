@@ -1,4 +1,4 @@
-RESOURCE_GROUP=brborges-techxchange2025
-SUBSCRIPTION=72f988bf-86f1-41af-91ab-2d7cd011db47
-AKS_CLUSTER_NAME=brborges-techxchange2025aks
+RESOURCE_GROUP=rg-brunoborges-default
+SUBSCRIPTION=f6a5db76-bbad-42ca-8a48-2e06ad6676ae
+AKS_CLUSTER_NAME=javaland
 AKS_CLUSTER_ADMIN=true
