@@ -4,4 +4,4 @@ metadata:
   name: app-insights-config
   namespace: default
 data:
-  connection-string: "InstrumentationKey=b0e343e0-0c9d-43c9-a06a-c3b7b51ab005;IngestionEndpoint=https://eastus2-3.in.applicationinsights.azure.com/;LiveEndpoint=https://eastus2.livediagnostics.monitor.azure.com/;ApplicationId=114132a1-8bd2-4ed9-bbd2-122f9a0095e3"
+  connection-string: "InstrumentationKey=14db92fb-5216-4dd2-b597-c41ea6aa43b3;IngestionEndpoint=https://eastus-8.in.applicationinsights.azure.com/;LiveEndpoint=https://eastus.livediagnostics.monitor.azure.com/;ApplicationId=b389c5b9-7434-46a1-b454-c891aa2913ff"
