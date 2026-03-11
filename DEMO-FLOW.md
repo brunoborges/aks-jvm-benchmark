@@ -83,20 +83,26 @@ cat app-deployment-pgc.yml | grep -A 5 "name: sampleapp"
 ### Step 1.2: Wait for Pods to be Ready
 
 ```bash
-# Watch pods come up
-kubectl get pods -w
+# Wait for each deployment rollout to finish
+kubectl rollout status deployment/sampleapp-ergonomics
+kubectl rollout status deployment/sampleapp-g1gc
+kubectl rollout status deployment/sampleapp-pgc
 
-# Once all are running (Ctrl+C to stop watching)
-kubectl get pods | grep sampleapp
+# Optional live view (shows only current sampleapp pods)
+kubectl get pods -l 'app=sampleapp,version in (ergonomics,g1gc,pgc)' -w
+
+# Snapshot after rollout
+kubectl get pods -l 'app=sampleapp,version in (ergonomics,g1gc,pgc)'
 ```
 
-### Step 1.3: Inspect Each Deployment
+### Step 1.3: Inspect Each Deployment (from Load Test Pod)
 
 ```bash
-# Check what GC each pod is actually using
-kubectl exec -it deployment/sampleapp-ergonomics -- curl localhost:8080/inspect
-kubectl exec -it deployment/sampleapp-g1gc -- curl localhost:8080/inspect
-kubectl exec -it deployment/sampleapp-pgc -- curl localhost:8080/inspect
+# Run this after Step 1.4 (loadtest deployment)
+# Query each service from the loadtest pod (curl is available there)
+kubectl exec -it deployment/loadtest -- curl -s http://internal-sampleapp-ergonomics.default.svc.cluster.local:8080/inspect
+kubectl exec -it deployment/loadtest -- curl -s http://internal-sampleapp-g1gc.default.svc.cluster.local:8080/inspect
+kubectl exec -it deployment/loadtest -- curl -s http://internal-sampleapp-pgc.default.svc.cluster.local:8080/inspect
 ```
 
 **Talking Points:**
@@ -112,6 +118,8 @@ kubectl apply -f ../loadtest-deployment.yml
 
 # Get the load test pod name
 kubectl get pods | grep loadtest
+
+# Now run Step 1.3 inspect commands
 ```
 
 ### Step 1.5: Run Benchmark - Simple JSON Endpoint
@@ -210,8 +218,14 @@ cat app-deployment-2by2.yml | grep -A 10 resources
 ```bash
 ./deploy-all.sh
 
-# Watch them come up
-kubectl get pods -w
+# Wait for each rollout (avoids confusion from old pods being terminated)
+kubectl rollout status deployment/sampleapp-2by2
+kubectl rollout status deployment/sampleapp-2by3
+kubectl rollout status deployment/sampleapp-3by2
+kubectl rollout status deployment/sampleapp-6by1
+
+# Optional live view
+kubectl get pods -l 'app=sampleapp,version in (2by2,2by3,3by2,6by1)' -w
 ```
 
 ### Step 2.4: Deploy Nginx Load Balancer
